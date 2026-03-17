@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS pharmacogenomics_by_target ENGINE = EmbeddedRocksDB () PRIMARY KEY targetFromSourceId AS (
+CREATE TABLE IF NOT EXISTS pharmacogenomics_by_target ENGINE = MergeTree() ORDER BY targetFromSourceId AS (
     SELECT
         targetFromSourceId,
         groupArray(
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS pharmacogenomics_by_target ENGINE = EmbeddedRocksDB (
         targetFromSourceId
 );
 
-CREATE TABLE IF NOT EXISTS pharmacogenomics_by_variant ENGINE = EmbeddedRocksDB () PRIMARY KEY variantId AS (
+CREATE TABLE IF NOT EXISTS pharmacogenomics_by_variant ENGINE = MergeTree() ORDER BY variantId AS (
     SELECT
         variantId,
         groupArray(
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS pharmacogenomics_by_variant ENGINE = EmbeddedRocksDB 
         variantId
 );
 
-CREATE TABLE IF NOT EXISTS pharmacogenomics_by_drug ENGINE = EmbeddedRocksDB () PRIMARY KEY drugId AS (
+CREATE TABLE IF NOT EXISTS pharmacogenomics_by_drug ENGINE = MergeTree() ORDER BY drugId AS (
     SELECT
         drug.drugId as drugId,
         groupArray(

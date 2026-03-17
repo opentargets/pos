@@ -37,7 +37,7 @@ from (
     ) as right_colocs;
 
 
-CREATE TABLE IF NOT EXISTS colocalisation ENGINE = EmbeddedRocksDB () PRIMARY KEY studyLocusId AS (
+CREATE TABLE IF NOT EXISTS colocalisation ENGINE = MergeTree() ORDER BY studyLocusId AS (
     SELECT
         studyLocusId,
         groupArrayDistinct (

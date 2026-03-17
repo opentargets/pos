@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS drug_warnings ENGINE = EmbeddedRocksDB () PRIMARY KEY chemblId AS (
+CREATE TABLE IF NOT EXISTS drug_warnings ENGINE = MergeTree() ORDER BY chemblId AS (
     SELECT
         arrayJoin (chemblIds) AS chemblId,
         groupArray ((

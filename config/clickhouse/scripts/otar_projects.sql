@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS otar_projects ENGINE = EmbeddedRocksDB () PRIMARY KEY efo_id AS (
-    SELECT *
-    FROM otar_projects_log
-);
+CREATE TABLE IF NOT EXISTS otar_projects ENGINE = MergeTree ()
+ORDER BY efo_id AS (
+        SELECT *
+        FROM otar_projects_log
+    );

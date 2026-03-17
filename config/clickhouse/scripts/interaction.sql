@@ -19,7 +19,7 @@ ORDER BY (targetA) SETTINGS allow_nullable_key = 1 AS (
             i.*
     );
 
-CREATE TABLE IF NOT EXISTS interaction ENGINE = EmbeddedRocksDB () PRIMARY KEY targetA AS
+CREATE TABLE IF NOT EXISTS interaction ENGINE = MergeTree() ORDER BY targetA AS
 (
     SELECT 
         targetA,

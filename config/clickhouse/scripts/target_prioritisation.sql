@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS target_prioritisation_temp ENGINE = EmbeddedRocksDB () primary key targetId as (
+CREATE TABLE IF NOT EXISTS target_prioritisation_temp ENGINE = MergeTree() ORDER BY targetId AS (
     SELECT
         targetId,
         arrayFilter(x -> x.2 != '', [
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS target_prioritisation_temp ENGINE = EmbeddedRocksDB (
     FROM target_prioritisation_log
 );
 
-CREATE TABLE IF NOT EXISTS target_prioritisation ENGINE = EmbeddedRocksDB () PRIMARY KEY targetId AS (
+CREATE TABLE IF NOT EXISTS target_prioritisation ENGINE = MergeTree() ORDER BY targetId AS (
     SELECT
         targetId,
         arrayFilter(x -> x.2 != '', arrayPushBack (

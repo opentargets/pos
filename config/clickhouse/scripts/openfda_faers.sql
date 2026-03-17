@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS openfda_faers ENGINE = EmbeddedRocksDB () PRIMARY KEY chembl_id AS (
+CREATE TABLE IF NOT EXISTS openfda_faers ENGINE = MergeTree() ORDER BY chembl_id AS (
     SELECT 
         chembl_id,
         reverse(

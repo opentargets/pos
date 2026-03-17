@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS mouse_phenotypes ENGINE = EmbeddedRocksDB () PRIMARY KEY targetFromSourceId AS (
+CREATE TABLE IF NOT EXISTS mouse_phenotypes ENGINE = MergeTree() ORDER BY targetFromSourceId AS (
     SELECT 
         targetFromSourceId,
         groupArray((

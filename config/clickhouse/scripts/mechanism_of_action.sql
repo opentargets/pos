@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS mechanism_of_action ENGINE = EmbeddedRocksDB () PRIMARY KEY chemblId AS (
+CREATE TABLE IF NOT EXISTS mechanism_of_action ENGINE = MergeTree() ORDER BY chemblId AS (
     SELECT 
         arrayJoin(chemblIds) AS chemblId,
         groupArray(

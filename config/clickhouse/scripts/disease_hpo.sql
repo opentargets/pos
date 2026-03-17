@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS disease_hpo ENGINE = EmbeddedRocksDB () PRIMARY KEY disease AS (
+CREATE TABLE IF NOT EXISTS disease_hpo ENGINE = MergeTree() ORDER BY disease AS (
     SELECT 
         disease,
         groupArray((

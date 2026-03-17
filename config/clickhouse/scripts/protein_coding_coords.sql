@@ -1,4 +1,4 @@
-CREATE TABLE if not exists protein_coding_coords_by_target engine = EmbeddedRocksDB () primary key targetId as (
+CREATE TABLE if not exists protein_coding_coords_by_target engine = MergeTree() order by targetId as (
     SELECT 
         targetId,
         groupArray(
@@ -37,7 +37,7 @@ CREATE TABLE if not exists protein_coding_coords_by_target engine = EmbeddedRock
     GROUP BY targetId
 );
 
-CREATE TABLE IF NOT EXISTS protein_coding_coords_by_variant ENGINE = EmbeddedRocksDB () primary key variantId as (
+CREATE TABLE IF NOT EXISTS protein_coding_coords_by_variant ENGINE = MergeTree() order by variantId as (
     SELECT 
         variantId,
         groupArray(

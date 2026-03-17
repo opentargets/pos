@@ -25,32 +25,17 @@ FROM (
 GROUP BY
     diseaseId;
 
-CREATE TABLE if not exists disease engine = EmbeddedRocksDB () primary key id as (
-    select
-        id,
-        name,
-        therapeuticAreas,
-        description,
-        dbXRefs,
-        directLocationIds,
-        indirectLocationIds,
-        obsoleteTerms,
-        CAST(
-            tupleToNameValuePairs (synonyms),
-            'Array(Tuple(relation String, terms Array(Nullable(String))))'
-        ) as synonyms,
-        parents,
-        children,
-        ancestors,
-        descendants,
-        ontology.isTherapeuticArea as isTherapeuticArea,
-        studies_by_disease.studyIds as studyIds,
-        indirect_studies.indirectStudyIds as indirectStudyIds
-    from
-        disease_log
-        left outer join studies_by_disease on disease_log.id = studies_by_disease.diseaseId
-        left outer join studies_by_disease_indirect as indirect_studies on disease_log.id = indirect_studies.diseaseId
-);
+CREATE TABLE if not exists disease engine = MergeTree ()
+order by id as (
+        select
+            id, name, therapeuticAreas, description, dbXRefs, directLocationIds, indirectLocationIds, obsoleteTerms, CAST(
+                tupleToNameValuePairs (synonyms), 'Array(Tuple(relation String, terms Array(Nullable(String))))'
+            ) as synonyms, parents, children, ancestors, descendants, ontology.isTherapeuticArea as isTherapeuticArea, studies_by_disease.studyIds as studyIds, indirect_studies.indirectStudyIds as indirectStudyIds
+        from
+            disease_log
+            left outer join studies_by_disease on disease_log.id = studies_by_disease.diseaseId
+            left outer join studies_by_disease_indirect as indirect_studies on disease_log.id = indirect_studies.diseaseId
+    );
 
 DROP TABLE IF EXISTS studies_by_disease SYNC;
 

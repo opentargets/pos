@@ -1,7 +1,8 @@
-CREATE TABLE IF NOT EXISTS evidence engine = EmbeddedRocksDB () primary key id as (
-    select *
-    from evidence_log
-);
+CREATE TABLE IF NOT EXISTS evidence engine = MergeTree ()
+order by id as (
+        select *
+        from evidence_log
+    );
 
 CREATE TABLE IF NOT EXISTS evidence_by_variant engine = MergeTree ()
 ORDER BY (
