@@ -90,3 +90,7 @@ CREATE TABLE IF NOT EXISTS interaction ENGINE = MergeTree() ORDER BY targetA AS
     FROM interaction_with_evidence
     GROUP BY targetA      
 );
+
+OPTIMIZE TABLE interaction FINAL;
+
+drop table if exists interaction_with_evidence SYNC;

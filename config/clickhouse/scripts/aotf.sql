@@ -13,6 +13,8 @@ SELECT
     noveltyIndirect
 FROM associations_otf_log;
 
+OPTIMIZE TABLE associations_otf_disease FINAL;
+
 CREATE TABLE IF NOT EXISTS associations_otf_target ENGINE = MergeTree ()
 ORDER BY (A, B, datasourceId) AS
 SELECT
@@ -33,7 +35,8 @@ SELECT
 FROM
     associations_otf_log
     LEFT OUTER JOIN disease_log ON associations_otf_log.diseaseId = disease_log.id;
-;
+
+OPTIMIZE TABLE associations_otf_target FINAL;
 
 drop table associations_otf_log SYNC;
 

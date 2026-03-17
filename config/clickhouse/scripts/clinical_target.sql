@@ -8,4 +8,6 @@ select id,
     clinicalReportIds
 from clinical_target_log
 where targetId is not null;
+
+OPTIMIZE TABLE clinical_target FINAL;
 drop table clinical_target_log;

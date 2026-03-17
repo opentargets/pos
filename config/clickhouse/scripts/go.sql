@@ -4,4 +4,6 @@ ORDER BY id AS (
         FROM gene_ontology_log
     );
 
+OPTIMIZE TABLE gene_ontology FINAL;
+
 DROP TABLE IF EXISTS gene_ontology_log SYNC;

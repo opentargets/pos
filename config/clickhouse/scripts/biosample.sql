@@ -4,4 +4,6 @@ ORDER BY (biosampleId) AS (
         FROM biosample_log
     );
 
+OPTIMIZE TABLE biosample FINAL;
+
 DROP TABLE IF EXISTS biosample_log SYNC;

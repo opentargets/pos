@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS target_prioritisation ENGINE = MergeTree() ORDER BY t
         LEFT JOIN target_essentiality ON target_prioritisation_temp.targetId = target_essentiality.id
 );
 
+OPTIMIZE TABLE target_prioritisation FINAL;
+
 DROP TABLE IF EXISTS target_prioritisation_temp SYNC;
 
 DROP TABLE IF EXISTS target_prioritisation_log SYNC;

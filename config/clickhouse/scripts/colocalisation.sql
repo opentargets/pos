@@ -17,6 +17,8 @@ from (
         from colocalisation_log
     ) as left_colocs;
 
+OPTIMIZE TABLE colocalisation_left FINAL;
+
 create table if not exists colocalisation_right engine = MergeTree ()
 order by (rightStudyType, studyLocusId) as
 select
@@ -35,6 +37,8 @@ from (
             rightStudyLocusId as studyLocusId, leftStudyLocusId as otherStudyLocusId, 'gwas' as rightStudyType, chromosome, colocalisationMethod, numberColocalisingVariants, h3, h4, clpp, betaRatioSignAverage
         from colocalisation_log
     ) as right_colocs;
+
+OPTIMIZE TABLE colocalisation_right FINAL;
 
 
 CREATE TABLE IF NOT EXISTS colocalisation ENGINE = MergeTree() ORDER BY studyLocusId AS (

@@ -37,6 +37,8 @@ CREATE TABLE if not exists protein_coding_coords_by_target engine = MergeTree() 
     GROUP BY targetId
 );
 
+OPTIMIZE TABLE protein_coding_coords_by_target FINAL;
+
 CREATE TABLE IF NOT EXISTS protein_coding_coords_by_variant ENGINE = MergeTree() order by variantId as (
     SELECT 
         variantId,
@@ -75,5 +77,7 @@ CREATE TABLE IF NOT EXISTS protein_coding_coords_by_variant ENGINE = MergeTree()
     FROM protein_coding_coords_log
     GROUP BY variantId
 );
+
+OPTIMIZE TABLE protein_coding_coords_by_variant FINAL;
 
 DROP TABLE IF EXISTS protein_coding_coords_log SYNC;

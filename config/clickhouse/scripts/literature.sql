@@ -7,4 +7,6 @@ ORDER BY (
         FROM literature_log
     );
 
+OPTIMIZE TABLE literature FINAL;
+
 DROP TABLE literature_log SYNC;

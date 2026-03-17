@@ -6,4 +6,6 @@ from (
         from ml_w2v_log
     );
 
+OPTIMIZE TABLE ml_w2v FINAL;
+
 drop table ml_w2v_log SYNC;

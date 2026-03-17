@@ -126,173 +126,173 @@ steps:
       requires:
         - open_search_stop data loading instance
     # clickhouse
-    - name: clickhouse_start data loading instance
-      volume_data: ${clickhouse_data}
-      volume_logs: ${clickhouse_logs}
-      clickhouse_version: ${clickhouse_version}
-      clickhouse_database: ${database_namespace}
-    - name: explode load all datasets
-      requires:
-        - sync_bucket etl output files
-        - sync_bucket etl view files
-        - clickhouse_start data loading instance
-      foreach: &clickhouse_datasets
-        - baseline_expression
-        - biosample
-        - credible_sets
-        - colocalisation
-        - disease_hpo
-        - drug
-        - drug_warnings
-        - enhancer_to_gene
-        - evidence
-        - expression
-        - go
-        - hpo
-        - interaction_evidence
-        - l2g_predictions
-        - literature
-        - mechanism_of_action
-        - mouse_phenotypes
-        - openfda_faers
-        - otar_projects
-        - pharmacogenomics
-        - protein_coding_coords
-        - so
-        - target_essentiality
-        - variants
-        - w2v
-        - clinical_indication
-        - clinical_report
-        - clinical_target
-      do:
-        - name: clickhouse_load clickhouse load ${each}
-          dataset: ${each}
-          clickhouse_database: ${database_namespace}
-          data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse target_prioritisation
-      requires:
-        - clickhouse_load clickhouse load target_essentiality
-      dataset: target_prioritisation
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load interaction
-      requires:
-        - clickhouse_load clickhouse load interaction_evidence
-      dataset: interaction
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load studies
-      requires:
-        - clickhouse_load clickhouse load credible_sets
-      dataset: studies
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load targets
-      requires:
-        - clickhouse_load clickhouse load studies
-      dataset: targets
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load disease
-      requires:
-        - clickhouse_load clickhouse load studies
-      dataset: disease
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load aotf
-      requires:
-        - clickhouse_load clickhouse load disease
-      dataset: aotf
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: explode backup clickhouse tables
-      requires:
-        - explode load all datasets
-        - clickhouse_load clickhouse target_prioritisation
-        - clickhouse_load clickhouse load interaction
-        - clickhouse_load clickhouse load studies
-        - clickhouse_load clickhouse load disease
-        - clickhouse_load clickhouse load aotf
-        - clickhouse_load clickhouse load targets
-      foreach: &clickhouse_tables
-        - associations_otf_target
-        - associations_otf_disease
-        - baseline_expression
-        - biosample
-        - colocalisation
-        - credible_sets
-        - credible_sets_by_variant
-        - credible_sets_by_region
-        - credible_sets_locus
-        - disease_hpo
-        - disease
-        - drug_warnings
-        - drug
-        - enhancer_to_gene
-        - evidence
-        - evidence_by_variant
-        - evidence_by_disease_and_target
-        - expression
-        - gene_ontology
-        - hpo
-        - interaction
-        - l2g_predictions
-        - literature
-        - mechanism_of_action
-        - ml_w2v
-        - mouse_phenotypes
-        - openfda_faers
-        - otar_projects
-        - pharmacogenomics_by_drug
-        - pharmacogenomics_by_target
-        - pharmacogenomics_by_variant
-        - protein_coding_coords_by_target
-        - protein_coding_coords_by_variant
-        - sequence_ontology
-        - studies
-        - target_essentiality
-        - target_prioritisation
-        - targets
-        - variants
-        - clinical_indication_disease
-        - clinical_indication_drug
-        - clinical_report
-        - clinical_target
-      do:
-        - name: clickhouse_backup table ${each}
-          clickhouse_database: ${database_namespace}
-          table: ${each}
-          gcs_base_path: ${clickhouse_backup_base_path}
-    - name: clickhouse_stop data loading instance
-      requires:
-        - explode backup clickhouse tables
-      clickhouse_database_name: ${database_namespace}
-    - name: create_gcp_disk_snapshot clickhouse
-      requires:
-        - clickhouse_stop data loading instance
-      gcp_project_id: ${disk_snapshot_project_id}
-      gcp_disk_name: ${clickhouse_disk_name}
-      gcp_snapshot_name: ${clickhouse_disk_snapshot_name}
-      gcp_disk_zone: europe-west1-d
-      mount_point: ${clickhouse_data}
-    # exports
-    - name: explode_data_prep search_ebi_associations
-      dataset: search_ebi_associations
-      parquet_parent: ${local_data}
-      json_parent: ${prepared_data}
-      step: export
-      remote_path: etc/export/search_ebi_associations.json
-      requires:
-        - sync_bucket etl view files
-    - name: upload search_ebi_associations
-      requires:
-        - explode_data_prep search_ebi_associations
-      source: ${prepared_data}/search_ebi_associations/search_ebi_associations.json
-      destination: etc/export/search_ebi_associations/search_ebi_associations.json
-    - name: sync_bucket epmc_cooccurrence
-      source: ${data_source}/intermediate/literature_epmc_cooccurrence
-      destination: ${data_source}/etc/export/epmc_cooccurrence
+    # - name: clickhouse_start data loading instance
+    #   volume_data: ${clickhouse_data}
+    #   volume_logs: ${clickhouse_logs}
+    #   clickhouse_version: ${clickhouse_version}
+    #   clickhouse_database: ${database_namespace}
+    # - name: explode load all datasets
+    #   requires:
+    #     - sync_bucket etl output files
+    #     - sync_bucket etl view files
+    #     - clickhouse_start data loading instance
+    #   foreach: &clickhouse_datasets
+    #     - baseline_expression
+    #     - biosample
+    #     - credible_sets
+    #     - colocalisation
+    #     - disease_hpo
+    #     - drug
+    #     - drug_warnings
+    #     - enhancer_to_gene
+    #     - evidence
+    #     - expression
+    #     - go
+    #     - hpo
+    #     - interaction_evidence
+    #     - l2g_predictions
+    #     - literature
+    #     - mechanism_of_action
+    #     - mouse_phenotypes
+    #     - openfda_faers
+    #     - otar_projects
+    #     - pharmacogenomics
+    #     - protein_coding_coords
+    #     - so
+    #     - target_essentiality
+    #     - variants
+    #     - w2v
+    #     - clinical_indication
+    #     - clinical_report
+    #     - clinical_target
+    #   do:
+    #     - name: clickhouse_load clickhouse load ${each}
+    #       dataset: ${each}
+    #       clickhouse_database: ${database_namespace}
+    #       data_dir_parent: ${local_data}
+    # - name: clickhouse_load clickhouse target_prioritisation
+    #   requires:
+    #     - clickhouse_load clickhouse load target_essentiality
+    #   dataset: target_prioritisation
+    #   clickhouse_database: ${database_namespace}
+    #   data_dir_parent: ${local_data}
+    # - name: clickhouse_load clickhouse load interaction
+    #   requires:
+    #     - clickhouse_load clickhouse load interaction_evidence
+    #   dataset: interaction
+    #   clickhouse_database: ${database_namespace}
+    #   data_dir_parent: ${local_data}
+    # - name: clickhouse_load clickhouse load studies
+    #   requires:
+    #     - clickhouse_load clickhouse load credible_sets
+    #   dataset: studies
+    #   clickhouse_database: ${database_namespace}
+    #   data_dir_parent: ${local_data}
+    # - name: clickhouse_load clickhouse load targets
+    #   requires:
+    #     - clickhouse_load clickhouse load studies
+    #   dataset: targets
+    #   clickhouse_database: ${database_namespace}
+    #   data_dir_parent: ${local_data}
+    # - name: clickhouse_load clickhouse load disease
+    #   requires:
+    #     - clickhouse_load clickhouse load studies
+    #   dataset: disease
+    #   clickhouse_database: ${database_namespace}
+    #   data_dir_parent: ${local_data}
+    # - name: clickhouse_load clickhouse load aotf
+    #   requires:
+    #     - clickhouse_load clickhouse load disease
+    #   dataset: aotf
+    #   clickhouse_database: ${database_namespace}
+    #   data_dir_parent: ${local_data}
+    # - name: explode backup clickhouse tables
+    #   requires:
+    #     - explode load all datasets
+    #     - clickhouse_load clickhouse target_prioritisation
+    #     - clickhouse_load clickhouse load interaction
+    #     - clickhouse_load clickhouse load studies
+    #     - clickhouse_load clickhouse load disease
+    #     - clickhouse_load clickhouse load aotf
+    #     - clickhouse_load clickhouse load targets
+    #   foreach: &clickhouse_tables
+    #     - associations_otf_target
+    #     - associations_otf_disease
+    #     - baseline_expression
+    #     - biosample
+    #     - colocalisation
+    #     - credible_sets
+    #     - credible_sets_by_variant
+    #     - credible_sets_by_region
+    #     - credible_sets_locus
+    #     - disease_hpo
+    #     - disease
+    #     - drug_warnings
+    #     - drug
+    #     - enhancer_to_gene
+    #     - evidence
+    #     - evidence_by_variant
+    #     - evidence_by_disease_and_target
+    #     - expression
+    #     - gene_ontology
+    #     - hpo
+    #     - interaction
+    #     - l2g_predictions
+    #     - literature
+    #     - mechanism_of_action
+    #     - ml_w2v
+    #     - mouse_phenotypes
+    #     - openfda_faers
+    #     - otar_projects
+    #     - pharmacogenomics_by_drug
+    #     - pharmacogenomics_by_target
+    #     - pharmacogenomics_by_variant
+    #     - protein_coding_coords_by_target
+    #     - protein_coding_coords_by_variant
+    #     - sequence_ontology
+    #     - studies
+    #     - target_essentiality
+    #     - target_prioritisation
+    #     - targets
+    #     - variants
+    #     - clinical_indication_disease
+    #     - clinical_indication_drug
+    #     - clinical_report
+    #     - clinical_target
+    #   do:
+    #     - name: clickhouse_backup table ${each}
+    #       clickhouse_database: ${database_namespace}
+    #       table: ${each}
+    #       gcs_base_path: ${clickhouse_backup_base_path}
+    # - name: clickhouse_stop data loading instance
+    #   requires:
+    #     - explode backup clickhouse tables
+    #   clickhouse_database_name: ${database_namespace}
+    # - name: create_gcp_disk_snapshot clickhouse
+    #   requires:
+    #     - clickhouse_stop data loading instance
+    #   gcp_project_id: ${disk_snapshot_project_id}
+    #   gcp_disk_name: ${clickhouse_disk_name}
+    #   gcp_snapshot_name: ${clickhouse_disk_snapshot_name}
+    #   gcp_disk_zone: europe-west1-d
+    #   mount_point: ${clickhouse_data}
+    # # exports
+    # - name: explode_data_prep search_ebi_associations
+    #   dataset: search_ebi_associations
+    #   parquet_parent: ${local_data}
+    #   json_parent: ${prepared_data}
+    #   step: export
+    #   remote_path: etc/export/search_ebi_associations.json
+    #   requires:
+    #     - sync_bucket etl view files
+    # - name: upload search_ebi_associations
+    #   requires:
+    #     - explode_data_prep search_ebi_associations
+    #   source: ${prepared_data}/search_ebi_associations/search_ebi_associations.json
+    #   destination: etc/export/search_ebi_associations/search_ebi_associations.json
+    # - name: sync_bucket epmc_cooccurrence
+    #   source: ${data_source}/intermediate/literature_epmc_cooccurrence
+    #   destination: ${data_source}/etc/export/epmc_cooccurrence
 
   ################################################################################################
   # Tarballs
@@ -480,172 +480,172 @@ steps:
   ################################################################################################
   # ClickHouse
   ################################################################################################
-  clickhouse:
-    - name: sync_bucket etl output files
-      source: ${data_source}/output
-      destination: ${local_data}/output
-    - name: sync_bucket etl view files
-      source: ${data_source}/view
-      destination: ${local_data}/view
-    - name: clickhouse_start data loading instance
-      volume_data: ${clickhouse_data}
-      volume_logs: ${clickhouse_logs}
-      clickhouse_version: ${clickhouse_version}
-      clickhouse_database: ${database_namespace}
-    - name: explode load all datasets
-      requires:
-        - sync_bucket etl output files
-        - sync_bucket etl view files
-        - clickhouse_start data loading instance
-      foreach: *clickhouse_datasets
-      do:
-        - name: clickhouse_load clickhouse load ${each}
-          dataset: ${each}
-          clickhouse_database: ${database_namespace}
-          data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse target_prioritisation
-      requires:
-        - clickhouse_load clickhouse load target_essentiality
-      dataset: target_prioritisation
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load interaction
-      requires:
-        - clickhouse_load clickhouse load interaction_evidence
-      dataset: interaction
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load studies
-      requires:
-        - clickhouse_load clickhouse load credible_sets
-      dataset: studies
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load targets
-      requires:
-        - clickhouse_load clickhouse load studies
-      dataset: targets
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load disease
-      requires:
-        - clickhouse_load clickhouse load studies
-      dataset: disease
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load aotf
-      requires:
-        - clickhouse_load clickhouse load disease
-      dataset: aotf
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_stop data loading instance
-      requires:
-        - explode load all datasets
-        - clickhouse_load clickhouse target_prioritisation
-        - clickhouse_load clickhouse load interaction
-        - clickhouse_load clickhouse load studies
-        - clickhouse_load clickhouse load disease
-        - clickhouse_load clickhouse load aotf
-        - clickhouse_load clickhouse load targets
-      clickhouse_database_name: ${database_namespace}
-    - name: create_gcp_disk_snapshot clickhouse
-      requires:
-        - clickhouse_stop data loading instance
-      gcp_project_id: ${disk_snapshot_project_id}
-      gcp_disk_name: ${clickhouse_disk_name}
-      gcp_snapshot_name: ${clickhouse_disk_snapshot_name}
-      gcp_disk_zone: europe-west1-d
-      mount_point: ${clickhouse_data}
-  ################################################################################################
-  # ClickHouse - Modular Steps
-  ################################################################################################
+  # clickhouse:
+  #   - name: sync_bucket etl output files
+  #     source: ${data_source}/output
+  #     destination: ${local_data}/output
+  #   - name: sync_bucket etl view files
+  #     source: ${data_source}/view
+  #     destination: ${local_data}/view
+  #   - name: clickhouse_start data loading instance
+  #     volume_data: ${clickhouse_data}
+  #     volume_logs: ${clickhouse_logs}
+  #     clickhouse_version: ${clickhouse_version}
+  #     clickhouse_database: ${database_namespace}
+  #   - name: explode load all datasets
+  #     requires:
+  #       - sync_bucket etl output files
+  #       - sync_bucket etl view files
+  #       - clickhouse_start data loading instance
+  #     foreach: *clickhouse_datasets
+  #     do:
+  #       - name: clickhouse_load clickhouse load ${each}
+  #         dataset: ${each}
+  #         clickhouse_database: ${database_namespace}
+  #         data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse target_prioritisation
+  #     requires:
+  #       - clickhouse_load clickhouse load target_essentiality
+  #     dataset: target_prioritisation
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load interaction
+  #     requires:
+  #       - clickhouse_load clickhouse load interaction_evidence
+  #     dataset: interaction
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load studies
+  #     requires:
+  #       - clickhouse_load clickhouse load credible_sets
+  #     dataset: studies
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load targets
+  #     requires:
+  #       - clickhouse_load clickhouse load studies
+  #     dataset: targets
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load disease
+  #     requires:
+  #       - clickhouse_load clickhouse load studies
+  #     dataset: disease
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load aotf
+  #     requires:
+  #       - clickhouse_load clickhouse load disease
+  #     dataset: aotf
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_stop data loading instance
+  #     requires:
+  #       - explode load all datasets
+  #       - clickhouse_load clickhouse target_prioritisation
+  #       - clickhouse_load clickhouse load interaction
+  #       - clickhouse_load clickhouse load studies
+  #       - clickhouse_load clickhouse load disease
+  #       - clickhouse_load clickhouse load aotf
+  #       - clickhouse_load clickhouse load targets
+  #     clickhouse_database_name: ${database_namespace}
+  #   - name: create_gcp_disk_snapshot clickhouse
+  #     requires:
+  #       - clickhouse_stop data loading instance
+  #     gcp_project_id: ${disk_snapshot_project_id}
+  #     gcp_disk_name: ${clickhouse_disk_name}
+  #     gcp_snapshot_name: ${clickhouse_disk_snapshot_name}
+  #     gcp_disk_zone: europe-west1-d
+  #     mount_point: ${clickhouse_data}
+  # ################################################################################################
+  # # ClickHouse - Modular Steps
+  # ################################################################################################
 
-  clickhouse_start:
-    - name: clickhouse_start data loading instance
-      volume_data: ${clickhouse_data}
-      volume_logs: ${clickhouse_logs}
-      clickhouse_version: ${clickhouse_version}
-      clickhouse_database: ${database_namespace}
-  clickhouse_tarball:
-    - name: tarball clickhouse
-      source: /mnt/clickhouse
-      destination: disk_images/clickhouse.tgz
-  clickhouse_disk_snapshot:
-    - name: create_gcp_disk_snapshot clickhouse
-      gcp_project_id: ${disk_snapshot_project_id}
-      gcp_disk_name: ${clickhouse_disk_name}
-      gcp_snapshot_name: ${clickhouse_disk_snapshot_name}
-      gcp_disk_zone: europe-west1-d
-      mount_point: ${clickhouse_data}
-  clickhouse_backup_all:
-    - name: clickhouse_start data loading instance
-      volume_data: ${clickhouse_data}
-      volume_logs: ${clickhouse_logs}
-      clickhouse_version: ${clickhouse_version}
-      clickhouse_database: ${database_namespace}
-    - name: explode backup clickhouse tables
-      requires:
-        - clickhouse_start data loading instance
-      foreach: *clickhouse_tables
-      do:
-        - name: clickhouse_backup table ${each}
-          requires:
-            - clickhouse_start data loading instance
-          clickhouse_database: ${database_namespace}
-          table: ${each}
-          gcs_base_path: ${clickhouse_backup_base_path}
-  clickhouse_restore_all:
-    - name: clickhouse_create_database for restoration
-      clickhouse_database: ${database_namespace}
-    - name: explode restore clickhouse tables
-      requires:
-        - clickhouse_create_database for restoration
-      foreach: *clickhouse_tables
-      do:
-        - name: clickhouse_restore table ${each}
-          clickhouse_database: ${database_namespace}
-          table: ${each}
-          gcs_base_path: ${clickhouse_backup_base_path}
-  clickhouse_stop:
-    - name: clickhouse_stop data loading instance
-      clickhouse_database_name: ${database_namespace}
-  clickhouse_load_all:
-    - name: sync_bucket pipeline output files
-      source: ${data_source}/output
-      destination: ${local_data}/output
-    - name: sync_bucket pipeline view files
-      source: ${data_source}/view
-      destination: ${local_data}/view
-    - name: clickhouse_start data loading instance
-      volume_data: ${clickhouse_data}
-      volume_logs: ${clickhouse_logs}
-      clickhouse_version: ${clickhouse_version}
-      clickhouse_database: ${database_namespace}
-    - name: explode load all datasets
-      foreach: *clickhouse_datasets
-      do:
-        - name: clickhouse_load clickhouse load ${each}
-          requires:
-            - clickhouse_start data loading instance
-            - sync_bucket pipeline output files
-            - sync_bucket pipeline view files
-          dataset: ${each}
-          clickhouse_database: ${database_namespace}
-          data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load aotf
-      requires:
-        - clickhouse_load clickhouse load disease
-      dataset: aotf
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load targets
-      requires:
-        - clickhouse_load clickhouse load credible_sets
-        - clickhouse_load clickhouse load studies
-      dataset: targets
-      clickhouse_database: ${database_namespace}
-      data_dir_parent: ${local_data}
+  # clickhouse_start:
+  #   - name: clickhouse_start data loading instance
+  #     volume_data: ${clickhouse_data}
+  #     volume_logs: ${clickhouse_logs}
+  #     clickhouse_version: ${clickhouse_version}
+  #     clickhouse_database: ${database_namespace}
+  # clickhouse_tarball:
+  #   - name: tarball clickhouse
+  #     source: /mnt/clickhouse
+  #     destination: disk_images/clickhouse.tgz
+  # clickhouse_disk_snapshot:
+  #   - name: create_gcp_disk_snapshot clickhouse
+  #     gcp_project_id: ${disk_snapshot_project_id}
+  #     gcp_disk_name: ${clickhouse_disk_name}
+  #     gcp_snapshot_name: ${clickhouse_disk_snapshot_name}
+  #     gcp_disk_zone: europe-west1-d
+  #     mount_point: ${clickhouse_data}
+  # clickhouse_backup_all:
+  #   - name: clickhouse_start data loading instance
+  #     volume_data: ${clickhouse_data}
+  #     volume_logs: ${clickhouse_logs}
+  #     clickhouse_version: ${clickhouse_version}
+  #     clickhouse_database: ${database_namespace}
+  #   - name: explode backup clickhouse tables
+  #     requires:
+  #       - clickhouse_start data loading instance
+  #     foreach: *clickhouse_tables
+  #     do:
+  #       - name: clickhouse_backup table ${each}
+  #         requires:
+  #           - clickhouse_start data loading instance
+  #         clickhouse_database: ${database_namespace}
+  #         table: ${each}
+  #         gcs_base_path: ${clickhouse_backup_base_path}
+  # clickhouse_restore_all:
+  #   - name: clickhouse_create_database for restoration
+  #     clickhouse_database: ${database_namespace}
+  #   - name: explode restore clickhouse tables
+  #     requires:
+  #       - clickhouse_create_database for restoration
+  #     foreach: *clickhouse_tables
+  #     do:
+  #       - name: clickhouse_restore table ${each}
+  #         clickhouse_database: ${database_namespace}
+  #         table: ${each}
+  #         gcs_base_path: ${clickhouse_backup_base_path}
+  # clickhouse_stop:
+  #   - name: clickhouse_stop data loading instance
+  #     clickhouse_database_name: ${database_namespace}
+  # clickhouse_load_all:
+  #   - name: sync_bucket pipeline output files
+  #     source: ${data_source}/output
+  #     destination: ${local_data}/output
+  #   - name: sync_bucket pipeline view files
+  #     source: ${data_source}/view
+  #     destination: ${local_data}/view
+  #   - name: clickhouse_start data loading instance
+  #     volume_data: ${clickhouse_data}
+  #     volume_logs: ${clickhouse_logs}
+  #     clickhouse_version: ${clickhouse_version}
+  #     clickhouse_database: ${database_namespace}
+  #   - name: explode load all datasets
+  #     foreach: *clickhouse_datasets
+  #     do:
+  #       - name: clickhouse_load clickhouse load ${each}
+  #         requires:
+  #           - clickhouse_start data loading instance
+  #           - sync_bucket pipeline output files
+  #           - sync_bucket pipeline view files
+  #         dataset: ${each}
+  #         clickhouse_database: ${database_namespace}
+  #         data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load aotf
+  #     requires:
+  #       - clickhouse_load clickhouse load disease
+  #     dataset: aotf
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
+  #   - name: clickhouse_load clickhouse load targets
+  #     requires:
+  #       - clickhouse_load clickhouse load credible_sets
+  #       - clickhouse_load clickhouse load studies
+  #     dataset: targets
+  #     clickhouse_database: ${database_namespace}
+  #     data_dir_parent: ${local_data}
   ########################################################################################
   # BigQuery
   bigquery_dev_load_all:

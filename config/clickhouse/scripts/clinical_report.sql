@@ -4,4 +4,6 @@ order by id as (
         from clinical_report_log
     );
 
+OPTIMIZE TABLE clinical_report FINAL;
+
 drop table clinical_report_log;

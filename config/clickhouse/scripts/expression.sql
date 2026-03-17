@@ -4,4 +4,6 @@ ORDER BY id AS (
         FROM expression_log
     );
 
+OPTIMIZE TABLE expression FINAL;
+
 DROP TABLE IF EXISTS expression_log SYNC;

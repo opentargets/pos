@@ -4,4 +4,6 @@ order by variantId as (
         from variants_log
     );
 
+OPTIMIZE TABLE variants FINAL;
+
 DROP TABLE IF EXISTS variants_log SYNC;

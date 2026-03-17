@@ -5,7 +5,7 @@ variable "vm_pos_boot_disk_size" {
 }
 
 variable "vm_pos_machine_type" {
-  description = "Machine type for POS vm, default 'n2-highmem-96'"
+  description = "Machine type for POS vm, default 'n2d-standard-64'"
   type        = string
   default     = "n2d-standard-64"
 }

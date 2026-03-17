@@ -29,4 +29,6 @@ CREATE TABLE IF NOT EXISTS mechanism_of_action ENGINE = MergeTree() ORDER BY che
         chemblId
 );
 
+OPTIMIZE TABLE mechanism_of_action FINAL;
+
 DROP TABLE IF EXISTS mechanism_of_action_log SYNC;

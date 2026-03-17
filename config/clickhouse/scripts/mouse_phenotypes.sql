@@ -35,4 +35,6 @@ CREATE TABLE IF NOT EXISTS mouse_phenotypes ENGINE = MergeTree() ORDER BY target
         targetFromSourceId
 );
 
+OPTIMIZE TABLE mouse_phenotypes FINAL;
+
 DROP TABLE IF EXISTS mouse_phenotypes_log SYNC;

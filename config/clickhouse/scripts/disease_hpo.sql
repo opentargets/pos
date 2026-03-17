@@ -30,4 +30,6 @@ CREATE TABLE IF NOT EXISTS disease_hpo ENGINE = MergeTree() ORDER BY disease AS 
     GROUP BY disease
 );
 
+OPTIMIZE TABLE disease_hpo FINAL;
+
 DROP TABLE IF EXISTS disease_hpo_log SYNC;

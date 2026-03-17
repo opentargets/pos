@@ -16,4 +16,6 @@ ORDER BY studyLocusId AS (
             studyLocusId
     );
 
+OPTIMIZE TABLE l2g_predictions FINAL;
+
 DROP TABLE IF EXISTS l2g_predictions_log SYNC;

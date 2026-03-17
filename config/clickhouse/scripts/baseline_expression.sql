@@ -8,4 +8,6 @@ order by (
         from baseline_expression_log
     );
 
+OPTIMIZE TABLE baseline_expression FINAL;
+
 drop table baseline_expression_log SYNC;

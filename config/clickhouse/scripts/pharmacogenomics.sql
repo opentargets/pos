@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS pharmacogenomics_by_target ENGINE = MergeTree() ORDER BY targetFromSourceId AS (
+CREATE TABLE IF NOT EXISTS pharmacogenomics_by_target ENGINE = MergeTree() ORDER BY targetFromSourceId settings allow_nullable_key = 1 AS (
     SELECT
         targetFromSourceId,
         groupArray(
@@ -67,7 +67,9 @@ CREATE TABLE IF NOT EXISTS pharmacogenomics_by_target ENGINE = MergeTree() ORDER
         targetFromSourceId
 );
 
-CREATE TABLE IF NOT EXISTS pharmacogenomics_by_variant ENGINE = MergeTree() ORDER BY variantId AS (
+OPTIMIZE TABLE pharmacogenomics_by_target FINAL;
+
+CREATE TABLE IF NOT EXISTS pharmacogenomics_by_variant ENGINE = MergeTree() ORDER BY variantId settings allow_nullable_key = 1 AS (
     SELECT
         variantId,
         groupArray(
@@ -136,7 +138,9 @@ CREATE TABLE IF NOT EXISTS pharmacogenomics_by_variant ENGINE = MergeTree() ORDE
         variantId
 );
 
-CREATE TABLE IF NOT EXISTS pharmacogenomics_by_drug ENGINE = MergeTree() ORDER BY drugId AS (
+OPTIMIZE TABLE pharmacogenomics_by_variant FINAL;
+
+CREATE TABLE IF NOT EXISTS pharmacogenomics_by_drug ENGINE = MergeTree() ORDER BY drugId settings allow_nullable_key = 1 AS (
     SELECT
         drug.drugId as drugId,
         groupArray(
@@ -205,5 +209,7 @@ CREATE TABLE IF NOT EXISTS pharmacogenomics_by_drug ENGINE = MergeTree() ORDER B
     GROUP BY 
         drug.drugId
 );
+
+OPTIMIZE TABLE pharmacogenomics_by_drug FINAL;
 
 DROP TABLE IF EXISTS pharmacogenomics_log SYNC;

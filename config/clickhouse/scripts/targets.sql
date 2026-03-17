@@ -39,6 +39,8 @@ order by id as (
             left outer join credible_sets_by_gene on targets_log.id = credible_sets_by_gene.geneId
     );
 
+OPTIMIZE TABLE targets FINAL;
+
 DROP TABLE IF EXISTS targets_log SYNC;
 
 DROP TABLE IF EXISTS target_credible_sets_by_study SYNC;

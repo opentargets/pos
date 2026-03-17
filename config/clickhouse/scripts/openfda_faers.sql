@@ -22,4 +22,6 @@ CREATE TABLE IF NOT EXISTS openfda_faers ENGINE = MergeTree() ORDER BY chembl_id
         chembl_id
 );
 
+OPTIMIZE TABLE openfda_faers FINAL;
+
 DROP TABLE IF EXISTS openfda_faers_log SYNC;

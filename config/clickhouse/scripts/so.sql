@@ -4,4 +4,6 @@ ORDER BY id AS (
         FROM sequence_ontology_log
     );
 
+OPTIMIZE TABLE sequence_ontology FINAL;
+
 DROP TABLE IF EXISTS sequence_ontology_log SYNC;

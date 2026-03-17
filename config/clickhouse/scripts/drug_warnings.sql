@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS drug_warnings ENGINE = MergeTree() ORDER BY chemblId AS (
+CREATE TABLE IF NOT EXISTS drug_warnings ENGINE = MergeTree() ORDER BY chemblId settings allow_nullable_key = 1 AS (
     SELECT
         arrayJoin (chemblIds) AS chemblId,
         groupArray ((
@@ -38,5 +38,7 @@ CREATE TABLE IF NOT EXISTS drug_warnings ENGINE = MergeTree() ORDER BY chemblId 
     GROUP BY 
         chemblId
 );
+
+OPTIMIZE TABLE drug_warnings FINAL;
 
 DROP TABLE IF EXISTS drug_warnings_log SYNC;

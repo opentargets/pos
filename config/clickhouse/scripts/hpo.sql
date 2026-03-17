@@ -4,4 +4,6 @@ ORDER BY id AS (
         FROM hpo_log
     );
 
+OPTIMIZE TABLE hpo FINAL;
+
 DROP TABLE IF EXISTS hpo_log SYNC;

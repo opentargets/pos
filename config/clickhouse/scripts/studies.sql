@@ -15,4 +15,6 @@ order by studyId as (
             left outer join credible_sets_by_study on studies_log.studyId = credible_sets_by_study.studyId
     );
 
+OPTIMIZE TABLE studies FINAL;
+
 DROP TABLE IF EXISTS credible_sets_by_study SYNC;

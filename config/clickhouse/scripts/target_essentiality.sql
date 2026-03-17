@@ -4,4 +4,6 @@ ORDER BY id AS (
         FROM target_essentiality_log
     );
 
+OPTIMIZE TABLE target_essentiality FINAL;
+
 DROP TABLE IF EXISTS target_essentiality_log SYNC;

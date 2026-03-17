@@ -4,4 +4,6 @@ ORDER BY id AS (
         FROM drug_log
     );
 
+OPTIMIZE TABLE drug FINAL;
+
 DROP TABLE IF EXISTS drug_log SYNC;
