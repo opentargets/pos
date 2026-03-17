@@ -5,9 +5,11 @@ ORDER BY studyLocusId AS (
     );
 
 CREATE TABLE IF NOT EXISTS credible_sets_by_study ENGINE = MergeTree ()
-ORDER BY studyId AS (
+ORDER BY
+    studyId settings allow_nullable_key = 1 AS (
         SELECT
-            studyId, groupArrayDistinct (studyLocusId) AS studyLocusIds
+            studyId,
+            groupArrayDistinct (studyLocusId) AS studyLocusIds
         FROM credible_sets_log
         WHERE
             studyId IS NOT NULL
@@ -16,18 +18,22 @@ ORDER BY studyId AS (
     );
 
 CREATE TABLE IF NOT EXISTS credible_sets_by_variant ENGINE = MergeTree ()
-ORDER BY variantId AS (
+ORDER BY
+    variantId settings allow_nullable_key = 1 AS (
         SELECT
-            arrayJoin (locus.variantId) AS variantId, groupArrayDistinct (studyLocusId) AS studyLocusIds
+            arrayJoin (locus.variantId) AS variantId,
+            groupArrayDistinct (studyLocusId) AS studyLocusIds
         FROM credible_sets_log
         GROUP BY
             variantId
     );
 
 CREATE TABLE IF NOT EXISTS credible_sets_by_region ENGINE = MergeTree ()
-ORDER BY region AS (
+ORDER BY
+    region settings allow_nullable_key = 1 AS (
         SELECT
-            groupArrayDistinct (studyLocusId) AS studyLocusIds, region
+            groupArrayDistinct (studyLocusId) AS studyLocusIds,
+            region
         FROM credible_sets_log
         WHERE
             region IS NOT NULL
@@ -36,7 +42,8 @@ ORDER BY region AS (
     );
 
 CREATE TABLE IF NOT EXISTS credible_sets_locus ENGINE = MergeTree ()
-ORDER BY studyLocusId AS (
+ORDER BY
+    studyLocusId settings allow_nullable_key = 1 AS (
         SELECT studyLocusId, locus
         FROM credible_sets_log
     );
