@@ -75,9 +75,10 @@ class ClickhouseLoad(Task):
         for file in files:
             logger.debug(f'Inserting file {file} into Clickhouse table {self._table_name}')
             insert_file(clickhouse_client, self._table_name, str(file), fmt='Parquet')
-        # run post load sql
-        post_load_statements = Path(self._post_load_sql).read_text().split(';')
-        self._execute_statements(clickhouse_client, post_load_statements)
+        if self._post_load_sql is not None:
+            # run post load sql
+            post_load_statements = Path(self._post_load_sql).read_text().split(';')
+            self._execute_statements(clickhouse_client, post_load_statements)
         return self
 
     def _get_parquet_path(self) -> Path:
