@@ -2,6 +2,7 @@
 
 import json
 from collections.abc import Generator
+from itertools import chain
 from pathlib import Path
 from typing import Any
 
@@ -54,14 +55,14 @@ class OpenSearchLoad(Task):
             opensearch = OpenSearch(
                 [{'host': self.spec.es_host, 'port': self.spec.es_port}], use_ssl=False, timeout=7200
             )
-        json_file = self._get_json_path()
-        if not json_file.exists():
-            logger.warning(f'file {json_file} does not exist, no data loaded in dataset {self.spec.dataset}')
+        json_files = self._get_json_files()
+        if not json_files:
+            logger.warning(f'no .json files found for dataset {self.spec.dataset}, no data loaded')
             return self
         for success, info in helpers.parallel_bulk(
             opensearch,
             index=self._index_name,
-            actions=self._generate_data(json_file),
+            actions=chain.from_iterable(self._generate_data(f) for f in json_files),
             thread_count=4,
             chunk_size=2000,
             queue_size=-1,
@@ -88,10 +89,9 @@ class OpenSearchLoad(Task):
                 for doc in rows:
                     yield doc
 
-    def _get_json_path(self) -> Path:
-        return Path(
-            f'{self.context.config.work_path}/{self.spec.json_parent}/{self._output_dir}/{self.spec.dataset}.json'
-        )
+    def _get_json_files(self) -> list[Path]:
+        json_dir = Path(f'{self.context.config.work_path}/{self.spec.json_parent}/{self._output_dir}')
+        return sorted(json_dir.glob('*.json'))
 
     def _get_index_name(self) -> str:
         return f'{self.spec.prefix}_{self._config[self.spec.dataset]["index"]}'
