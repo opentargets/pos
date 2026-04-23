@@ -5,7 +5,7 @@ from pathlib import Path
 
 from loguru import logger
 from otter.manifest.model import Artifact
-from otter.storage import get_remote_storage
+from otter.storage.synchronous.handle import StorageHandle
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
 from otter.util.errors import OtterError
@@ -51,8 +51,9 @@ class Tarball(Task):
         # upload the result to remote storage
         if self.remote_uri:
             logger.debug(f'uploading tarball to {self.remote_uri}')
-            remote_storage = get_remote_storage(self.remote_uri)
-            remote_storage.upload(self.local_path, self.remote_uri)
+            s = StorageHandle(self.local_path)
+            d = StorageHandle(self.remote_uri)
+            s.copy_to(d)
             logger.debug('upload successful')
         self.artifacts = [Artifact(source=str(self.source), destination=str(self.destination))]
         return self

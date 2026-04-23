@@ -1,3 +1,4 @@
+import asyncio
 import functools
 import os
 from contextlib import contextmanager
@@ -7,7 +8,8 @@ import click
 from click_default_group import DefaultGroup
 from loguru import logger
 from otter import Runner
-from otter.storage.google import GoogleStorage
+from otter.manifest.model import Result
+from otter.storage.synchronous.google import GoogleStorage
 
 from pos.gcp.snapshot_disk import snapshot_exists
 from pos.gcp.vm import ComputeEngineSSHTunnel
@@ -31,7 +33,10 @@ def pos_runner() -> None:
     runner = Runner('pos')
     runner.start()
     runner.register_tasks('pos.tasks')
-    runner.run()
+    s = asyncio.run(runner.run())
+    if s.manifest.result not in [Result.PENDING, Result.SUCCESS]:
+        logger.error(f'step {s.name} failed')
+        raise SystemExit(1)
 
 
 def common_params(func):
@@ -632,8 +637,8 @@ def _backend_targets_already_exist(config: Path) -> bool:
     backup_bucket = scratchpad.opensearch_snapshot_bucket
     gcs = GoogleStorage()
     gcs_backups_exists = [
-        len(gcs.glob(uri=f'gs://{backup_bucket}/opensearch/{database_namespace}/*')) > 0,
-        len(gcs.glob(uri=f'gs://{backup_bucket}/clickhouse/{database_namespace}/*')) > 0,
+        len(gcs.glob(location=f'gs://{backup_bucket}/opensearch/{database_namespace}/')) > 0,
+        len(gcs.glob(location=f'gs://{backup_bucket}/clickhouse/{database_namespace}/')) > 0,
     ]
     if any(gcs_backups_exists):
         logger.warning('GCS backup paths already exist.')

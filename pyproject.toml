@@ -11,7 +11,7 @@ dependencies = [
     "google-cloud-bigquery>=3.34.0",
     "google-cloud-compute>=1.31.0",
     "opensearch-py>=3.0.0",
-    "opentargets-otter>=25.0.16",
+    "opentargets-otter>=26.3.4",
     "orjson>=3.10.18",
     "ot-croissant",
     "paramiko>=4.0.0",

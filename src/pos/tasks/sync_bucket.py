@@ -1,7 +1,6 @@
 # Sync bucket
 
 import subprocess
-from pathlib import Path
 
 from loguru import logger
 from otter.task.model import Spec, Task, TaskContext

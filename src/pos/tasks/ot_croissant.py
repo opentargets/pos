@@ -7,7 +7,7 @@ from pathlib import Path
 from loguru import logger
 from ot_croissant.crumbs.metadata import PlatformOutputMetadata  # type: ignore[import-untyped]
 from otter.manifest.model import Artifact
-from otter.storage import get_remote_storage
+from otter.storage.synchronous.handle import StorageHandle
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
 from otter.util.errors import OtterError, ScratchpadError
@@ -110,8 +110,9 @@ class OtCroissant(Task):
         # upload the result to remote storage
         if self.remote_uri:
             logger.info(f'uploading {self.local_path} to {self.remote_uri}')
-            remote_storage = get_remote_storage(self.remote_uri)
-            remote_storage.upload(self.local_path, self.remote_uri)
+            s = StorageHandle(self.local_path)
+            d = StorageHandle(self.remote_uri)
+            s.copy_to(d)
             logger.debug('metadata upload successful')
 
     def _write_ndjson(self, metadata: PlatformOutputMetadata) -> None:

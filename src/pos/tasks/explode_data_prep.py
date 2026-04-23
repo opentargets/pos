@@ -1,7 +1,6 @@
 # Data prep task
 
 from pathlib import Path
-from queue import Queue
 from typing import Literal
 
 from box import Box
@@ -56,7 +55,6 @@ class ExplodeDataPrep(Task):
     @report
     def run(self) -> Task:
         logger.debug(f'Exploding {self.spec.dataset}')
-        subtask_queue: Queue[Spec] = self.context.sub_queue
         files = self.abs_input_dir.glob('*.parquet')
         for file in files:
             spec = DataPrepSpec(
@@ -69,10 +67,7 @@ class ExplodeDataPrep(Task):
                 if json_file.exists():
                     json_file.unlink()
             subtask_spec = spec.model_validate(self.scratchpad.replace_dict(spec.model_dump()))
-            subtask_spec.task_queue = subtask_queue
-            subtask_queue.put(subtask_spec)
-        subtask_queue.shutdown()
-        subtask_queue.join()
+            self.context.specs.append(subtask_spec)
         return self
 
     def _get_parquet_source(self) -> Path:

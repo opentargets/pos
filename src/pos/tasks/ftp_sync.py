@@ -5,7 +5,7 @@ from importlib.resources import files
 from pathlib import Path
 
 from loguru import logger
-from otter.storage.google import GoogleStorage
+from otter.storage.synchronous.google import GoogleStorage
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
 from paramiko import SSHClient
@@ -49,7 +49,7 @@ class FtpSync(Task):
 
     def _get_credentials_file(self) -> str:
         google_storage = GoogleStorage()
-        content, _ = google_storage.download_to_string(self.spec.gcs_credentials_file_remote)
+        content, _ = google_storage.read_text(self.spec.gcs_credentials_file_remote)
         return content
 
     def _write_files_to_server(self, ssh: SSHClient) -> None:

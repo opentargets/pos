@@ -97,7 +97,7 @@ function uv_run() {
     if [ -z "$processes" ]; then
         processes=10
     fi
-    uv --directory /opt/pos run pos -c /etc/opt/pos_config.yaml -p $processes -s $step
+    GCE_METADATA_MTLS_MODE=none uv --directory /opt/pos run pos -c /etc/opt/pos_config.yaml -p $processes -s $step
 }
 
 function copy_clickhouse_configs() {
