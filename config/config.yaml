@@ -757,10 +757,8 @@ steps:
       destination: ${release_gcs_bucket}/${release}/
   aws_sync:
     - name: rclone_sync aws release data
-      # source: gcs:${data_source}/
-      # destination: aws:${release_aws_bucket}/${release}/
-      source: gcs:${data_source}/croissant.json
-      destination: /Users/jhayhurst/Downloads/test_release/
+      source: gcs:${data_source}/
+      destination: aws:${release_aws_bucket}/${release}/
   # ftp_sync
   ftp_sync:
     - name: ftp_sync release data to ftp server
