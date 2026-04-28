@@ -519,6 +519,20 @@ def gcs_sync(product) -> None:
 
 
 @pos.command()
+def aws_sync() -> None:
+    """Release data to AWS."""
+    config = Path('config').joinpath('config.yaml')
+    step = 'aws_sync'
+    os.environ['POS_CONFIG_PATH'] = str(config)
+    os.environ['POS_STEP'] = step
+    aws_conf = get_config(str(config)).steps.aws_sync[0]
+    source = aws_conf.source
+    destination = aws_conf.destination
+    if click.confirm(f'Release {source} to {destination}?'):
+        pos_runner()
+
+
+@pos.command()
 def ftp_sync():
     """Release data to FTP. Not available for PPP."""
     config = Path('config').joinpath('config.yaml')
