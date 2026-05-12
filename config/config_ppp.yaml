@@ -30,7 +30,7 @@ scratchpad:
   opensearch_snapshot_repository: ot-os-snapshots
   opensearch_snapshot_bucket: open-targets-data-backends
   opensearch_snapshot_base_path: opensearch
-  opensearch_indices_to_restore: '*,-.*' # e.g. '*,-.*' to restore all except hidden indices
+  opensearch_indices_to_restore: "*,-.*" # e.g. '*,-.*' to restore all except hidden indices
 
   # clickhouse
   clickhouse_version: 25.8.18.1
@@ -66,7 +66,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: explode prep and load all datasets
       requires:
         - sync_bucket etl output files
@@ -147,7 +147,7 @@ steps:
         - literature
         - mechanism_of_action
         - mouse_phenotypes
-        - novelty
+        - association_time_series
         - openfda_faers
         - otar_projects
         - pharmacogenomics
@@ -236,7 +236,7 @@ steps:
         - mechanism_of_action
         - ml_w2v
         - mouse_phenotypes
-        - novelty
+        - association_time_series
         - openfda_faers
         - otar_projects
         - pharmacogenomics_by_drug
@@ -332,7 +332,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: explode prep and load all datasets
       requires:
         - sync_bucket etl output files
@@ -392,7 +392,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: open_search_snapshot data loading instance
       requires:
         - open_search_start data loading instance

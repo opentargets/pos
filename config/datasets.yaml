@@ -102,7 +102,7 @@ clickhouse:
     input_dir: output
     preload_script: config/clickhouse/schema/evidence.sql
     postload_script: config/clickhouse/scripts/evidence.sql
-    glob_pattern: 'evidence_*/*.parquet'
+    glob_pattern: "evidence_*/*.parquet"
   expression:
     table: expression_log
     input_dir: output/expression
@@ -148,11 +148,11 @@ clickhouse:
     input_dir: output/mouse_phenotype
     preload_script: config/clickhouse/schema/mouse_phenotypes.sql
     postload_script: config/clickhouse/scripts/mouse_phenotypes.sql
-  novelty:
-    table: novelty_log
+  association_time_series:
+    table: association_time_series_log
     input_dir: view/association_timeseries
-    preload_script: config/clickhouse/schema/novelty.sql
-    postload_script: config/clickhouse/scripts/novelty.sql
+    preload_script: config/clickhouse/schema/association_time_series.sql
+    postload_script: config/clickhouse/scripts/association_time_series.sql
   openfda_faers:
     table: openfda_faers_log
     input_dir: output/openfda_significant_adverse_drug_reactions

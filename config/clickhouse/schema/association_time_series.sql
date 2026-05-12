@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS novelty_log (
+CREATE TABLE IF NOT EXISTS association_time_series_log (
     diseaseId String,
     targetId String,
     aggregationType String,
