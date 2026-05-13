@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS drug_log (
     ),
     parentId Nullable (String),
     maximumClinicalStage String,
-    description Nullable (String)
+    description Nullable (String),
+    molfile Nullable (String),
 ) ENGINE = Log;
