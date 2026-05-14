@@ -1,0 +1,4 @@
+/croissant.json
+/output/**
+/manifest.json
+/release_data_integrity*

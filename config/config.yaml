@@ -17,7 +17,6 @@ scratchpad:
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
-  aws_address: s3://open-targets-public-data-releases/platform
 
   # temp file locations
   local_data: release_data
@@ -44,6 +43,9 @@ scratchpad:
 
   # ftp sync
   ftp_sync_path_gcs_credentials_file: gs://open-targets-ops/credentials/pis-service_account.json
+
+  # aws sync
+  aws_address: s3://open-targets-public-data-releases/platform
 
 steps:
   ##################################################################################################
@@ -759,6 +761,7 @@ steps:
     - name: rclone_sync aws release data
       source: gcs:${data_source}/
       destination: aws:${release_aws_bucket}/${release}/
+      # sync_flags: --dry-run
   # ftp_sync
   ftp_sync:
     - name: ftp_sync release data to ftp server
