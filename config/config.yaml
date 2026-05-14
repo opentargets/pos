@@ -17,7 +17,6 @@ scratchpad:
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
-  aws_address: s3://open-targets-public-data-releases/platform
 
   # temp file locations
   local_data: release_data
@@ -31,7 +30,7 @@ scratchpad:
   opensearch_snapshot_repository: ot-os-snapshots
   opensearch_snapshot_bucket: open-targets-data-backends
   opensearch_snapshot_base_path: opensearch
-  opensearch_indices_to_restore: '*,-.*' # e.g. '*,-.*' to restore all except hidden indices
+  opensearch_indices_to_restore: "*,-.*" # e.g. '*,-.*' to restore all except hidden indices
 
   # clickhouse
   clickhouse_version: 25.8.18.1
@@ -44,6 +43,9 @@ scratchpad:
 
   # ftp sync
   ftp_sync_path_gcs_credentials_file: gs://open-targets-ops/credentials/pis-service_account.json
+
+  # aws sync
+  aws_address: s3://open-targets-public-data-releases/platform
 
 steps:
   ##################################################################################################
@@ -73,7 +75,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: explode prep and load all datasets
       requires:
         - sync_bucket etl output files
@@ -356,7 +358,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: explode prep and load all datasets
       requires:
         - sync_bucket etl output files
@@ -416,7 +418,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: open_search_snapshot data loading instance
       requires:
         - open_search_start data loading instance
@@ -769,6 +771,7 @@ steps:
     - name: rclone_sync aws release data
       source: gcs:${data_source}/
       destination: aws:${release_aws_bucket}/${release}/
+      # sync_flags: --dry-run
   # ftp_sync
   ftp_sync:
     - name: ftp_sync release data to ftp server
