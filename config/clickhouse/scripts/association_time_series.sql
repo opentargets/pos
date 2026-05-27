@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS association_time_series ENGINE = MergeTree ()
 ORDER BY (
-        diseaseId, targetId, isDirect, aggregationValue, year
+        diseaseId, targetId, isDirect, aggregationType, aggregationValue, year
     ) SETTINGS allow_nullable_key = 1 AS
 SELECT
     diseaseId,
