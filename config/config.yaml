@@ -2,18 +2,18 @@
 # Platform Output Support Configuration File - PLATFORM
 work_path: ./work
 log_level: DEBUG
-release_uri: gs://open-targets-pipeline-runs/ds/26.03-test5
+release_uri: gs://open-targets-pipeline-runs/il/26.06.0-dev0
 scratchpad:
   # ================================= SET THESE VALUES ====================================
-  release: 26.03 # e.g. 25.12
-  data_source: gs://open-targets-pre-data-releases/26.03 # same as release_uri
-  database_namespace: platform2603 # e.g. platform2512
+  release: 26.06 # e.g. 25.12
+  data_source: gs://open-targets-pipeline-runs/il/26.06.0-dev0 # same as release_uri
+  database_namespace: platform2606 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2603-os
-  opensearch_disk_snapshot_name: platform-2603-os
-  clickhouse_disk_name: platform-2603-ch
-  clickhouse_disk_snapshot_name: platform-2603-ch
+  opensearch_disk_name: platform-2606-os-rc1
+  opensearch_disk_snapshot_name: platform-2606-os-rc1
+  clickhouse_disk_name: platform-2606-ch-rc1
+  clickhouse_disk_snapshot_name: platform-2606-ch-rc1
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
@@ -31,7 +31,7 @@ scratchpad:
   opensearch_snapshot_repository: ot-os-snapshots
   opensearch_snapshot_bucket: open-targets-data-backends
   opensearch_snapshot_base_path: opensearch
-  opensearch_indices_to_restore: '*,-.*' # e.g. '*,-.*' to restore all except hidden indices
+  opensearch_indices_to_restore: "*,-.*" # e.g. '*,-.*' to restore all except hidden indices
 
   # clickhouse
   clickhouse_version: 25.8.18.1
@@ -73,7 +73,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: explode prep and load all datasets
       requires:
         - sync_bucket etl output files
@@ -146,7 +146,6 @@ steps:
         - drug_warnings
         - enhancer_to_gene
         - evidence
-        - expression
         - go
         - hpo
         - interaction_evidence
@@ -233,7 +232,6 @@ steps:
         - evidence
         - evidence_by_variant
         - evidence_by_disease_and_target
-        - expression
         - gene_ontology
         - hpo
         - interaction
@@ -356,7 +354,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: explode prep and load all datasets
       requires:
         - sync_bucket etl output files
@@ -416,7 +414,7 @@ steps:
       volume_logs: ${opensearch_logs}
       opensearch_version: ${opensearch_version}
       opensearch_java_opts: ${opensearch_java_opts}
-      startup_wait: '60'
+      startup_wait: "60"
     - name: open_search_snapshot data loading instance
       requires:
         - open_search_start data loading instance
@@ -693,7 +691,6 @@ steps:
         - evidence_reactome
         - evidence_uniprot_literature
         - evidence_uniprot_variants
-        - expression
         - go
         - interaction
         - interaction_evidence

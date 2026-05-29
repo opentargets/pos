@@ -8,5 +8,7 @@ CREATE TABLE IF NOT EXISTS gene_ontology_log (
     regulates Array (String),
     negativelyRegulates Array (String),
     positivelyRegulates Array (String),
-    isObsolete Bool
+    isObsolete Bool,
+    ancestors Array (String),
+    descendants Array (String)
 ) ENGINE = Log;
