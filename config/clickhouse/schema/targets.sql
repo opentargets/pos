@@ -141,7 +141,8 @@ CREATE TABLE if not exists targets_log (
             `location` String,
             `source` String,
             `termSL` Nullable (String),
-            `labelSL` Nullable (String)
+            `labelSL` Nullable (String),
+            `targetModifier` Nullable (String)
         )
     ),
     `synonyms` Array (

@@ -17,4 +17,5 @@ create table if not exists baseline_expression_log (
     datasourceId String,
     datatypeId String,
     unit String,
+    qualityControls Array (String)
 ) engine = Log;

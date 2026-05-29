@@ -15,5 +15,7 @@ CREATE TABLE IF NOT EXISTS target_prioritisation_log (
     mouseOrthologMaxIdentityPercentage Nullable (Float64),
     paralogMaxIdentityPercentage Nullable (Float64),
     tissueDistribution Nullable (Float64),
-    tissueSpecificity Nullable (Float64)
+    tissueSpecificity Nullable (Float64),
+    celltypeSpecificity Nullable (Float64),
+    celltypeDistribution Nullable (Float64)
 ) ENGINE = Log;
