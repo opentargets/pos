@@ -288,9 +288,6 @@ steps:
         - explode_data_prep search_ebi_associations
       source: ${prepared_data}/search_ebi_associations/search_ebi_associations.json
       destination: etc/export/search_ebi_associations/search_ebi_associations.json
-    - name: sync_bucket epmc_cooccurrence
-      source: ${data_source}/intermediate/literature_epmc_cooccurrence
-      destination: ${data_source}/etc/export/epmc_cooccurrence
 
   ################################################################################################
   # Tarballs
@@ -753,10 +750,6 @@ steps:
         - explode_data_prep search_ebi_associations
       source: ${prepared_data}/search_ebi_associations/search_ebi_associations.json
       destination: etc/export/search_ebi_associations/search_ebi_associations.json
-    # EPMC Co-occurrence
-    - name: sync_bucket epmc_cooccurrence
-      source: ${data_source}/intermediate/literature_epmc_cooccurrence
-      destination: ${data_source}/etc/export/epmc_cooccurrence
   # gcs_sync
   gcs_sync:
     - name: sync_bucket gcs release data
