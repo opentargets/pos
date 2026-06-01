@@ -133,7 +133,7 @@ clickhouse:
     input_dir: output/l2g_prediction
     preload_script: config/clickhouse/schema/l2g_predictions.sql
     postload_script: config/clickhouse/scripts/l2g_predictions.sql
-  literature:
+  literature_entity_lut:
     table: literature_entity_lut_log
     input_dir: output/literature_entity_lut
     preload_script: config/clickhouse/schema/literature.sql
