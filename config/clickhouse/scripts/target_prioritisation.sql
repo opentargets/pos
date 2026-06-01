@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS target_prioritisation_temp ENGINE = EmbeddedRocksDB (
         ('mouseOrthologMaxIdentityPercentage', toString(mouseOrthologMaxIdentityPercentage)),
         ('paralogMaxIdentityPercentage', toString(paralogMaxIdentityPercentage)),
         ('tissueDistribution', toString(tissueDistribution)),
-        ('tissueSpecificity', toString(tissueSpecificity))
+        ('tissueSpecificity', toString(tissueSpecificity)),
+        ('celltypeSpecificity', toString(celltypeSpecificity)),
+        ('celltypeDistribution', toString(celltypeDistribution))
     ])::Array(Tuple(key String, value String)) AS tp
     FROM target_prioritisation_log
 );
@@ -31,11 +33,11 @@ CREATE TABLE IF NOT EXISTS target_prioritisation ENGINE = EmbeddedRocksDB () PRI
                 tp.size0 > 0,
                 (
                     'geneEssentiality',
-                    CASE 
+                    CASE
                         WHEN arrayElement (
                             geneEssentiality.isEssential,
                             1
-                        ) = 'true' THEN '-1' 
+                        ) = 'true' THEN '-1'
                         WHEN arrayElement (
                             geneEssentiality.isEssential,
                             1
