@@ -136,8 +136,8 @@ clickhouse:
   literature_entity_lut:
     table: literature_entity_lut_log
     input_dir: output/literature_entity_lut
-    preload_script: config/clickhouse/schema/literature.sql
-    postload_script: config/clickhouse/scripts/literature.sql
+    preload_script: config/clickhouse/schema/literature_entity_lut.sql
+    postload_script: config/clickhouse/scripts/literature_entity_lut.sql
   mechanism_of_action:
     table: mechanism_of_action_log
     input_dir: output/drug_mechanism_of_action
