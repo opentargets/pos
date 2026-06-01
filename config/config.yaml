@@ -150,7 +150,7 @@ steps:
         - hpo
         - interaction_evidence
         - l2g_predictions
-        - literature
+        - literature_entity_lut
         - mechanism_of_action
         - mouse_phenotypes
         - openfda_faers
