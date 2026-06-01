@@ -1,4 +1,4 @@
-create table if not exists literature_log (
+create table if not exists literature_entity_lut_log (
     pmid String,
     pmcid Nullable (String),
     date Date,
