@@ -7,6 +7,6 @@ ORDER BY (
         FROM literature_entity_lut_log
     );
 
-OPTIMIZE TABLE literature FINAL;
+OPTIMIZE TABLE literature_entity_lut FINAL;
 
 DROP TABLE literature_entity_lut_log SYNC;
