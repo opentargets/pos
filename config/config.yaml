@@ -10,10 +10,10 @@ scratchpad:
   database_namespace: platform2606 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2606-os-rc1
-  opensearch_disk_snapshot_name: platform-2606-os-rc1
-  clickhouse_disk_name: platform-2606-ch-rc1
-  clickhouse_disk_snapshot_name: platform-2606-ch-rc1
+  opensearch_disk_name: platform-2606-os-rc2
+  opensearch_disk_snapshot_name: platform-2606-os-rc2
+  clickhouse_disk_name: platform-2606-ch-rc2
+  clickhouse_disk_snapshot_name: platform-2606-ch-rc2
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
