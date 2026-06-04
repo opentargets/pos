@@ -10,10 +10,10 @@ scratchpad:
   database_namespace: platform2606 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2606-os-rc2
-  opensearch_disk_snapshot_name: platform-2606-os-rc2
-  clickhouse_disk_name: platform-2606-ch-rc2
-  clickhouse_disk_snapshot_name: platform-2606-ch-rc2
+  opensearch_disk_name: platform-2606-os-4408-1
+  opensearch_disk_snapshot_name: platform-2606-os-4408-1
+  clickhouse_disk_name: platform-2606-ch-4408-1
+  clickhouse_disk_snapshot_name: platform-2606-ch-4408-1
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
@@ -236,7 +236,7 @@ steps:
         - hpo
         - interaction
         - l2g_predictions
-        - literature
+        - literature_entity_lut
         - mechanism_of_action
         - ml_w2v
         - mouse_phenotypes
@@ -693,7 +693,7 @@ steps:
         - interaction_evidence
         - known_drug
         - l2g_prediction
-        - literature
+        - literature_entity_lut
         - literature_vector
         - mouse_phenotypes
         - openfda_significant_adverse_drug_reactions
