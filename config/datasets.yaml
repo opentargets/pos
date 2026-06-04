@@ -102,7 +102,7 @@ clickhouse:
     input_dir: output
     preload_script: config/clickhouse/schema/evidence.sql
     postload_script: config/clickhouse/scripts/evidence.sql
-    glob_pattern: "evidence_*/*.parquet"
+    glob_pattern: 'evidence_*/*.parquet'
   expression:
     table: expression_log
     input_dir: output/expression
@@ -356,9 +356,9 @@ bigquery:
   l2g_prediction:
     index: l2g_prediction
     input_dir: output/l2g_prediction
-  literature:
-    index: literature
-    input_dir: output/literature
+  literature_entity_lut:
+    index: literature_entity_lut
+    input_dir: output/literature_entity_lut
   literature_vector:
     index: literature_vector
     input_dir: output/literature_vector
