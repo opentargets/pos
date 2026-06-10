@@ -120,10 +120,8 @@ CREATE TABLE IF NOT EXISTS evidence_log (
     `statisticalTestTail` Nullable (String),
     `interactingTargetFromSourceId` Nullable (String),
     `phenotypicConsequenceLogFoldChange` Nullable (Float64),
-    `phenotypicConsequenceFDR` Nullable (Float64),
     `phenotypicConsequencePValue` Nullable (Float64),
     `geneticInteractionScore` Nullable (Float64),
-    `geneticInteractionPValue` Nullable (Float64),
     `geneticInteractionFDR` Nullable (Float64),
     `biomarkerList` Array (
         Tuple (
@@ -132,7 +130,7 @@ CREATE TABLE IF NOT EXISTS evidence_log (
         )
     ),
     `projectDescription` Nullable (String),
-    `geneInteractionType` Nullable (String),
+    `geneticInteractionType` Nullable (String),
     `targetRole` Nullable (String),
     `interactingTargetRole` Nullable (String),
     `ancestry` Nullable (String),
@@ -161,5 +159,13 @@ CREATE TABLE IF NOT EXISTS evidence_log (
     `trialStopReasonCategories` Array (String),
     `qualityControls` Array (String),
     `publicationDate` Nullable (String),
-    `evidenceDate` Nullable (String)
+    `evidenceDate` Nullable (String),
+    `validationReadouts` Array (
+        Tuple (
+            hsaValue Nullable (Float64),
+            isValidated Nullable (Bool),
+            readoutMethodName Nullable (String),
+            screen Nullable (String)
+        )
+    )
 ) engine = Log;
