@@ -1,8 +1,18 @@
 CREATE TABLE IF NOT EXISTS drug_log (
     id String,
     name String,
-    synonyms Array (String),
-    tradeNames Array (String),
+    synonyms Array (
+        Tuple (
+            label String,
+            source String
+        )
+    ),
+    tradeNames Array (
+        Tuple (
+            label String,
+            source String
+        )
+    ),
     childChemblIds Array (String),
     drugType String,
     crossReferences Array (
