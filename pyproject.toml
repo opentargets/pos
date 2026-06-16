@@ -186,4 +186,4 @@ convention = "google"
 ignore-decorators = ["pos.tasks.report", "pos.manifest.task_reporter.report"]
 
 [tool.uv.sources]
-ot-croissant = { git = "https://github.com/opentargets/ot_croissant", tag = "v26.03.0" }
+ot-croissant = { git = "https://github.com/opentargets/ot_croissant", tag = "v26.06.0" }
