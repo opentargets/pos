@@ -72,5 +72,5 @@ class CreateGcpDiskSnapshot(Task):
             subteam=self.spec.gcp_labels_subteam,
             product=self.spec.gcp_labels_product,
             tool=self.spec.gcp_labels_tool,
-            release=self.context.scratchpad.sentinel_dict.get('release', ''),
+            release=self.context.scratchpad.sentinel_dict.get('release', '').replace('.', ''),
         )
