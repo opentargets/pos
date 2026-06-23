@@ -1,27 +1,23 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <yandex>
     <profiles>
         <default>
             <max_memory_usage>0</max_memory_usage>
-		    <max_bytes_before_external_sort>20000000000</max_bytes_before_external_sort>
-		    <max_bytes_before_external_group_by
-            >20000000000</max_bytes_before_external_group_by>
+            <max_bytes_before_external_sort>20000000000</max_bytes_before_external_sort>
+            <max_bytes_before_external_group_by>20000000000</max_bytes_before_external_group_by>
             <use_uncompressed_cache>1</use_uncompressed_cache>
             <load_balancing>random</load_balancing>
             <max_query_size>1048576</max_query_size>
             <date_time_overflow_behavior>saturate</date_time_overflow_behavior>
-            <max_execution_time>600</max_execution_time>
         </default>
         <readonly>
             <max_memory_usage>30000000000</max_memory_usage>
-		    <max_bytes_before_external_sort>20000000000</max_bytes_before_external_sort>
-		    <max_bytes_before_external_group_by
-            >20000000000</max_bytes_before_external_group_by>
+            <max_bytes_before_external_sort>20000000000</max_bytes_before_external_sort>
+            <max_bytes_before_external_group_by>20000000000</max_bytes_before_external_group_by>
             <use_uncompressed_cache>1</use_uncompressed_cache>
             <load_balancing>random</load_balancing>
             <readonly>128</readonly>
             <max_query_size>1048576</max_query_size>
-            <max_execution_time>600</max_execution_time>
         </readonly>
     </profiles>
     <users>
