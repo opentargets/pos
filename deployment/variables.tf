@@ -7,7 +7,7 @@ variable "vm_pos_boot_disk_size" {
 variable "vm_pos_machine_type" {
   description = "Machine type for POS vm, default 'n2-highmem-96'"
   type        = string
-  default     = "n2d-standard-80"
+  default     = "n2-highmem-96"
 }
 
 variable "pos_logs_path_root" {
@@ -89,4 +89,3 @@ variable "pos_config_file" {
   type        = string
   default     = "../config/config.yaml"
 }
-
