@@ -10,6 +10,7 @@
             <load_balancing>random</load_balancing>
             <max_query_size>1048576</max_query_size>
             <date_time_overflow_behavior>saturate</date_time_overflow_behavior>
+            <max_execution_time>600</max_execution_time>
         </default>
         <readonly>
             <max_memory_usage>30000000000</max_memory_usage>
@@ -20,6 +21,7 @@
             <load_balancing>random</load_balancing>
             <readonly>128</readonly>
             <max_query_size>1048576</max_query_size>
+            <max_execution_time>600</max_execution_time>
         </readonly>
     </profiles>
     <users>
