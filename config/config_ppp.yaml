@@ -2,17 +2,17 @@
 # Platform Output Support Configuration File - PPP
 work_path: ./work
 log_level: DEBUG
-release_uri: gs://open-targets-pipeline-runs/sz/26.03-ppp.1 # e.g gs://open-targets-pipeline-runs/szsz/25.06-testrun-4
+release_uri: gs://open-targets-pipeline-runs/ds/26.06.0-ppp-dev1 # e.g gs://open-targets-pipeline-runs/szsz/25.06-testrun-4
 scratchpad:
   # ================================= SET THESE VALUES ====================================
-  release: 26.03 # e.g. 25.12
-  data_source: gs://open-targets-pipeline-runs/sz/26.03-ppp.1 # same as release_uri
-  database_namespace: ppp2603 # e.g. ppp2603
+  release: "26.06" # e.g. 25.12
+  data_source: gs://open-targets-pipeline-runs/ds/26.06.0-ppp-dev1 # same as release_uri
+  database_namespace: ppp2606 # e.g. ppp2603
   # Google disk snapshot variables
-  opensearch_disk_name: ppp-2603-os
-  opensearch_disk_snapshot_name: ppp-2603-os
-  clickhouse_disk_name: ppp-2603-ch
-  clickhouse_disk_snapshot_name: ppp-2603-ch
+  opensearch_disk_name: ppp-2606-os-rc5
+  opensearch_disk_snapshot_name: ppp-2606-os-rc5
+  clickhouse_disk_name: ppp-2606-ch-rc5
+  clickhouse_disk_snapshot_name: ppp-2606-ch-rc5
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-ppp-data-releases
@@ -139,12 +139,11 @@ steps:
         - drug_warnings
         - enhancer_to_gene
         - evidence
-        - expression
         - go
         - hpo
         - interaction_evidence
         - l2g_predictions
-        - literature
+        - literature_entity_lut
         - mechanism_of_action
         - mouse_phenotypes
         - association_time_series
@@ -227,12 +226,11 @@ steps:
         - evidence
         - evidence_by_variant
         - evidence_by_disease_and_target
-        - expression
         - gene_ontology
         - hpo
         - interaction
         - l2g_predictions
-        - literature
+        - literature_entity_lut
         - mechanism_of_action
         - ml_w2v
         - mouse_phenotypes
