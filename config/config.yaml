@@ -760,8 +760,8 @@ steps:
   aws_sync:
     - name: rclone_sync aws release data
       source: gcs:${data_source}/
-      destination: aws:${release_aws_bucket}/${release}/
-      # sync_flags: --dry-run
+      destination: aws:${aws_address}/${release}/
+      #sync_flags: --dry-run
   # ftp_sync
   ftp_sync:
     - name: ftp_sync release data to ftp server
