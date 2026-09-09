@@ -203,6 +203,11 @@ clickhouse:
     input_dir: view/target_view
     preload_script: config/clickhouse/schema/targets.sql
     postload_script: config/clickhouse/scripts/targets.sql
+  transcript:
+    table: transcript_log
+    input_dir: output/transcript
+    preload_script: config/clickhouse/schema/transcript.sql
+    postload_script: config/clickhouse/scripts/transcript.sql
   variants:
     table: variants_log
     input_dir: output/variant
@@ -382,7 +387,7 @@ bigquery:
     input_dir: output/study
   target:
     index: target
-    input_dir: output/target
+    input_dir: view/target_view
   target_essentiality:
     index: target_essentiality
     input_dir: output/target_essentiality
