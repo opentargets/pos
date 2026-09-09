@@ -1,4 +1,5 @@
 CREATE TABLE if not exists interaction_log (
+    interactionId UInt64,
     intA String,
     targetA String,
     intB String,

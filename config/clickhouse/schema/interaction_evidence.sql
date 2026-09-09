@@ -1,4 +1,5 @@
 CREATE TABLE if not exists interaction_evidence_log (
+    interactionId UInt64,
     evidenceScore Nullable (Float64),
     expansionMethodMiIdentifier Nullable (String),
     expansionMethodShortName Nullable (String),
@@ -24,24 +25,6 @@ CREATE TABLE if not exists interaction_evidence_log (
     interactionScore Float64,
     interactionTypeMiIdentifier Nullable (String),
     interactionTypeShortName Nullable (String),
-    intA String,
-    intABiologicalRole LowCardinality (String),
-    intASource String,
-    intB String,
-    intBBiologicalRole LowCardinality (String),
-    intBSource String,
-    speciesA Tuple (
-        mnemonic LowCardinality (String),
-        scientificName LowCardinality (String),
-        taxonId UInt8
-    ),
-    speciesB Tuple (
-        mnemonic LowCardinality (String),
-        scientificName LowCardinality (Nullable (String)),
-        taxonId Nullable (UInt8)
-    ),
-    targetA String,
-    targetB Nullable (String),
     participantDetectionMethodA Array (
         Tuple (
             miIdentifier Nullable (String),
