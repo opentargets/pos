@@ -1,23 +1,30 @@
 CREATE TABLE IF NOT EXISTS interaction_with_evidence ENGINE = MergeTree
 ORDER BY (targetA) SETTINGS allow_nullable_key = 1 AS (
-        SELECT i.*, arrayFilter(e -> e.6 IS NOT NULL, groupArray (
+        SELECT i.*, groupArray (
                 (
-                    e.evidenceScore, e.expansionMethodMiIdentifier, e.expansionMethodShortName, e.hostOrganismScientificName, e.hostOrganismTaxId, e.intASource, e.intBSource, e.interactionDetectionMethodMiIdentifier, e.interactionDetectionMethodShortName, e.interactionIdentifier, e.interactionResources, e.interactionTypeMiIdentifier, e.interactionTypeShortName, e.participantDetectionMethodA, e.participantDetectionMethodB, e.pubmedId
+                    e.evidenceScore,
+                    e.expansionMethodMiIdentifier,
+                    e.expansionMethodShortName,
+                    e.hostOrganismScientificName,
+                    e.hostOrganismTaxId,
+                    e.interactionDetectionMethodMiIdentifier,
+                    e.interactionDetectionMethodShortName,
+                    e.interactionIdentifier,
+                    e.interactionTypeMiIdentifier,
+                    e.interactionTypeShortName,
+                    e.participantDetectionMethodA,
+                    e.participantDetectionMethodB,
+                    e.pubmedId
                 )
-            )) AS evidences
+            ) AS evidences
         FROM
             interaction_log AS i
             LEFT JOIN interaction_evidence_log AS e
-            ON i.targetA = e.targetA
-            AND isNotDistinctFrom(i.targetB, e.targetB)
-            AND isNotDistinctFrom(i.intA, e.intA)
-            AND isNotDistinctFrom(i.intB, e.intB)
-            AND isNotDistinctFrom(i.intABiologicalRole, e.intABiologicalRole)
-            AND isNotDistinctFrom(i.intBBiologicalRole, e.intBBiologicalRole)
-            AND i.sourceDatabase = e.interactionResources.sourceDatabase
+            ON i.interactionId = e.interactionId
         GROUP BY
             i.*
     );
+
 
 CREATE TABLE IF NOT EXISTS interaction ENGINE = EmbeddedRocksDB () PRIMARY KEY targetA AS
 (
@@ -63,15 +70,9 @@ CREATE TABLE IF NOT EXISTS interaction ENGINE = EmbeddedRocksDB () PRIMARY KEY t
                     expansionMethodShortName Nullable (String),
                     hostOrganismScientificName Nullable (String),
                     hostOrganismTaxId Nullable (UInt32),
-                    intASource String,
-                    intBSource String,
                     interactionDetectionMethodMiIdentifier String,
                     interactionDetectionMethodShortName String,
                     interactionIdentifier Nullable (String),
-                    interactionResources Tuple (
-                        databaseVersion LowCardinality (String),
-                        sourceDatabase LowCardinality (String)
-                    ),
                     interactionTypeMiIdentifier Nullable (String),
                     interactionTypeShortName Nullable (String),
                     participantDetectionMethodA Array (Tuple (
