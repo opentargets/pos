@@ -2,14 +2,21 @@ create table if not exists clinical_report_log (
     id String,
     source LowCardinality (String),
     clinicalStage LowCardinality (String),
+    origin String,
     phaseFromSource Nullable (String),
+    provider String,
     type Nullable (String),
     title Nullable (String),
     trialStudyType Nullable (String),
     trialDescription Nullable (String),
     trialNumberOfArms Nullable (Int32),
     trialStartDate Nullable (Date),
-    trialLiterature Array (String),
+    trialLiterature Array (
+        Tuple (
+            id String,
+            type String,
+        )
+    ),
     trialOverallStatus Nullable (String),
     trialWhyStopped Nullable (String),
     trialPrimaryPurpose Nullable (String),
@@ -32,7 +39,6 @@ create table if not exists clinical_report_log (
             drugId String
         )
     ),
-    hasExpertReview Bool,
     countries Array (String),
     year Nullable (Int32),
     sideEffects Array (

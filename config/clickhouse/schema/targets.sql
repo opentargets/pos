@@ -20,7 +20,6 @@ CREATE TABLE if not exists targets_log (
             `mechanismOfAction` Array (String),
             `isHighQuality` Bool,
             `origin` Array (String),
-            `probeMinerScore` Nullable (Float64),
             `probesDrugsScore` Nullable (Float64),
             `scoreInCells` Nullable (Float64),
             `scoreInOrganisms` Nullable (Float64),
@@ -181,12 +180,6 @@ CREATE TABLE if not exists targets_log (
             `label` String,
             `level` String
         )
-    ),
-    `tep` Tuple (
-        `url` String,
-        `targetFromSourceId` String,
-        `therapeuticArea` String,
-        `description` String
     ),
     `tractability` Array (
         Tuple (
