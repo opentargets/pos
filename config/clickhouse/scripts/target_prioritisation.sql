@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS target_prioritisation ENGINE = EmbeddedRocksDB () PRI
                     'geneEssentiality',
                     CASE
                         WHEN arrayElement (
-                            geneEssentiality.isEssential,
+                            isEssential,
                             1
                         ) = 'true' THEN '-1'
                         WHEN arrayElement (
-                            geneEssentiality.isEssential,
+                            isEssential,
                             1
                         ) = 'false' THEN '0'
                         ELSE ''
