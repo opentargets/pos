@@ -33,7 +33,7 @@ scratchpad:
   opensearch_indices_to_restore: '*,-.*' # e.g. '*,-.*' to restore all except hidden indices
 
   # clickhouse
-  clickhouse_version: 25.8.18.1
+  clickhouse_version: 26.8.2.7
   clickhouse_data: /mnt/clickhouse/data
   clickhouse_logs: /var/log/pos/clickhouse
   clickhouse_backup_base_path: https://storage.googleapis.com/open-targets-data-backends/clickhouse/
