@@ -200,7 +200,7 @@ clickhouse:
     postload_script: config/clickhouse/scripts/target_prioritisation.sql
   targets:
     table: targets_log
-    input_dir: output/target
+    input_dir: view/target_view
     preload_script: config/clickhouse/schema/targets.sql
     postload_script: config/clickhouse/scripts/targets.sql
   variants:
