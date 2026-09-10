@@ -37,7 +37,7 @@ CREATE TABLE if not exists transcript_log (
     ),
     `start` UInt32,
     `end` UInt32,
-    `strand` Int8,
+    `strand` Enum ('-1', '0', '1'),
     `transcriptionStartSite` UInt32,
     `flags` Array(
         Tuple(
@@ -77,7 +77,7 @@ CREATE TABLE if not exists transcript_log (
             ),
             `start` UInt32,
             `end` UInt32,
-            `strand` Int8
+            `strand` Enum ('-1', '0', '1'),
         )
     )
 ) engine = Log;
