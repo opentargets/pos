@@ -41,7 +41,8 @@ class Converter:
             schema = pq.read_schema(path, filesystem=filesystem)
         except OSError:
             schema = (
-                pl.read_parquet(
+                pl
+                .read_parquet(
                     parquet_path,
                     n_rows=1,
                     hive_partitioning=self._hive_partitioning,

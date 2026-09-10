@@ -76,8 +76,8 @@ resource "google_compute_instance" "posvm" {
     startup-script = templatefile(
       "startup.sh",
       {
-        POS_USER_NAME = local.posvm_remote_user_name
-        BRANCH        = var.pos_git_branch
+        POS_USER_NAME        = local.posvm_remote_user_name
+        BRANCH               = var.pos_git_branch
         OPENSEARCH_DISK_NAME = var.open_search_disk_name
         CLICKHOUSE_DISK_NAME = var.clickhouse_disk_name
         FORMAT_OS_DISK       = var.open_search_snapshot_source == null ? "true" : "false"
@@ -94,8 +94,8 @@ resource "google_compute_instance" "posvm" {
       "s3_config.tftpl",
       {
         GCS_BASE_PATH = var.clickhouse_backup_base_path
-        ACCESS_KEY = google_storage_hmac_key.key.access_id
-        SECRET_KEY = google_storage_hmac_key.key.secret
+        ACCESS_KEY    = google_storage_hmac_key.key.access_id
+        SECRET_KEY    = google_storage_hmac_key.key.secret
       }
     )
   }

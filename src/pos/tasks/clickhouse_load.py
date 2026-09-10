@@ -55,7 +55,7 @@ class ClickhouseLoad(Task):
                 username=self.spec.clickhouse_username,
                 password=self.spec.clickhouse_password,
                 database=self.spec.clickhouse_database,
-                port=self.spec.clickhouse_port
+                port=self.spec.clickhouse_port,
             ).client()
         else:
             clickhouse_client = clickhouse_connect.get_client(
@@ -63,7 +63,7 @@ class ClickhouseLoad(Task):
                 port=self.spec.clickhouse_port,
                 username=self.spec.clickhouse_username,
                 password=self.spec.clickhouse_password,
-                database=self.spec.clickhouse_database
+                database=self.spec.clickhouse_database,
             )
         if not clickhouse_client:
             raise ClickhouseLoadError(f'Clickhouse service {self.spec.service_name} failed to start')

@@ -38,7 +38,7 @@ class ClickhouseCreateDatabase(Task):
                 port=self.spec.port,
                 username=self.spec.username,
                 password=self.spec.password,
-                database='default'
+                database='default',
             )
             create_database(client, self.spec.clickhouse_database, exists_ok=self.spec.exist_ok)
         except DatabaseError as db_err:
