@@ -10,7 +10,7 @@ resource "tls_private_key" "posvm" {
   rsa_bits  = 4096
 }
 
-#Create the HMAC key for the associated service account 
+#Create the HMAC key for the associated service account
 resource "google_storage_hmac_key" "key" {
   service_account_email = "pos-service-account@open-targets-prod.iam.gserviceaccount.com"
   project               = "open-targets-prod"
@@ -43,10 +43,10 @@ resource "google_compute_instance" "posvm" {
   name         = "posvm-${random_string.posvm.result}"
   machine_type = var.vm_pos_machine_type
   # instance_termination_action = "DELETE"
-  # max_run_duration = "10800s" // 3 hours  
+  # max_run_duration = "10800s" // 3 hours
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-13"
       type  = "pd-ssd"
       size  = var.vm_pos_boot_disk_size
     }

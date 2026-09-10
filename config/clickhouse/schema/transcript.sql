@@ -79,4 +79,5 @@ CREATE TABLE if not exists transcript_log (
             `end` UInt32,
             `strand` Int8
         )
-    ),
+    )
+) engine = Log;

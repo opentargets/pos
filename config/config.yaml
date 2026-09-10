@@ -2,18 +2,18 @@
 # Platform Output Support Configuration File - PLATFORM
 work_path: ./work
 log_level: DEBUG
-release_uri: gs://open-targets-pipeline-runs/ds/26.06.0-dev2
+release_uri: gs://open-targets-pipeline-runs/do/platform-2609-2
 scratchpad:
   # ================================= SET THESE VALUES ====================================
-  release: '26.06' # e.g. 25.12
-  data_source: gs://open-targets-pipeline-runs/ds/26.06.0-dev2 # same as release_uri
-  database_namespace: platform2606 # e.g. platform2512
+  release: '26.09' # e.g. 25.12
+  data_source: gs://open-targets-pipeline-runs/do/platform-2609-2
+  database_namespace: platform2609 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2606-os-rc3
-  opensearch_disk_snapshot_name: platform-2606-os-rc3
-  clickhouse_disk_name: platform-2606-ch-rc4
-  clickhouse_disk_snapshot_name: platform-2606-ch-rc4
+  opensearch_disk_name: platform-2609-os-rc1
+  opensearch_disk_snapshot_name: platform-2609-os-rc1
+  clickhouse_disk_name: platform-2609-ch-rc1
+  clickhouse_disk_snapshot_name: platform-2609-ch-rc1
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
@@ -108,16 +108,16 @@ steps:
           dataset: ${each}
           prefix: ${database_namespace}
           json_parent: ${prepared_data}
-    - name: open_search_snapshot data loading instance
-      requires:
-        - explode prep and load all datasets
-      snapshot_repository_name: ${opensearch_snapshot_repository}
-      snapshot_name: ${database_namespace}
-      snapshot_bucket: ${opensearch_snapshot_bucket}
-      snapshot_base_path: ${opensearch_snapshot_base_path}/${database_namespace}
+    # - name: open_search_snapshot data loading instance
+    #   requires:
+    #     - explode prep and load all datasets
+    #   snapshot_repository_name: ${opensearch_snapshot_repository}
+    #   snapshot_name: ${database_namespace}
+    #   snapshot_bucket: ${opensearch_snapshot_bucket}
+    #   snapshot_base_path: ${opensearch_snapshot_base_path}/${database_namespace}
     - name: open_search_stop data loading instance
       requires:
-        - open_search_snapshot data loading instance
+        - explode prep and load all datasets
       service_name: os-pos
     - name: create_gcp_disk_snapshot opensearch
       gcp_project_id: ${disk_snapshot_project_id}
@@ -161,6 +161,7 @@ steps:
         - protein_coding_coords
         - so
         - target_essentiality
+        - transcript
         - variants
         - w2v
         - clinical_indication
@@ -207,7 +208,64 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
-    - name: explode backup clickhouse tables
+    # - name: explode backup clickhouse tables
+    #   requires:
+    #     - explode load all datasets
+    #     - clickhouse_load clickhouse target_prioritisation
+    #     - clickhouse_load clickhouse load interaction
+    #     - clickhouse_load clickhouse load studies
+    #     - clickhouse_load clickhouse load disease
+    #     - clickhouse_load clickhouse load aotf
+    #     - clickhouse_load clickhouse load targets
+    #   foreach: &clickhouse_tables
+    #     - associations_otf_target
+    #     - associations_otf_disease
+    #     - baseline_expression
+    #     - biosample
+    #     - colocalisation
+    #     - credible_sets
+    #     - credible_sets_by_variant
+    #     - credible_sets_by_region
+    #     - credible_sets_locus
+    #     - disease_hpo
+    #     - disease
+    #     - drug_warnings
+    #     - drug
+    #     - enhancer_to_gene
+    #     - evidence
+    #     - evidence_by_variant
+    #     - evidence_by_disease_and_target
+    #     - gene_ontology
+    #     - hpo
+    #     - interaction
+    #     - l2g_predictions
+    #     - literature_entity_lut
+    #     - mechanism_of_action
+    #     - ml_w2v
+    #     - mouse_phenotypes
+    #     - openfda_faers
+    #     - otar_projects
+    #     - pharmacogenomics_by_drug
+    #     - pharmacogenomics_by_target
+    #     - pharmacogenomics_by_variant
+    #     - protein_coding_coords_by_target
+    #     - protein_coding_coords_by_variant
+    #     - sequence_ontology
+    #     - studies
+    #     - target_essentiality
+    #     - target_prioritisation
+    #     - targets
+    #     - variants
+    #     - clinical_indication_disease
+    #     - clinical_indication_drug
+    #     - clinical_report
+    #     - clinical_target
+    #   do:
+    #     - name: clickhouse_backup table ${each}
+    #       clickhouse_database: ${database_namespace}
+    #       table: ${each}
+    #       gcs_base_path: ${clickhouse_backup_base_path}
+    - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
         - clickhouse_load clickhouse target_prioritisation
@@ -216,57 +274,6 @@ steps:
         - clickhouse_load clickhouse load disease
         - clickhouse_load clickhouse load aotf
         - clickhouse_load clickhouse load targets
-      foreach: &clickhouse_tables
-        - associations_otf_target
-        - associations_otf_disease
-        - baseline_expression
-        - biosample
-        - colocalisation
-        - credible_sets
-        - credible_sets_by_variant
-        - credible_sets_by_region
-        - credible_sets_locus
-        - disease_hpo
-        - disease
-        - drug_warnings
-        - drug
-        - enhancer_to_gene
-        - evidence
-        - evidence_by_variant
-        - evidence_by_disease_and_target
-        - gene_ontology
-        - hpo
-        - interaction
-        - l2g_predictions
-        - literature_entity_lut
-        - mechanism_of_action
-        - ml_w2v
-        - mouse_phenotypes
-        - openfda_faers
-        - otar_projects
-        - pharmacogenomics_by_drug
-        - pharmacogenomics_by_target
-        - pharmacogenomics_by_variant
-        - protein_coding_coords_by_target
-        - protein_coding_coords_by_variant
-        - sequence_ontology
-        - studies
-        - target_essentiality
-        - target_prioritisation
-        - targets
-        - variants
-        - clinical_indication_disease
-        - clinical_indication_drug
-        - clinical_report
-        - clinical_target
-      do:
-        - name: clickhouse_backup table ${each}
-          clickhouse_database: ${database_namespace}
-          table: ${each}
-          gcs_base_path: ${clickhouse_backup_base_path}
-    - name: clickhouse_stop data loading instance
-      requires:
-        - explode backup clickhouse tables
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:
@@ -584,7 +591,49 @@ steps:
     - name: explode backup clickhouse tables
       requires:
         - clickhouse_start data loading instance
-      foreach: *clickhouse_tables
+      foreach: &clickhouse_tables
+        - associations_otf_target
+        - associations_otf_disease
+        - baseline_expression
+        - biosample
+        - colocalisation
+        - credible_sets
+        - credible_sets_by_variant
+        - credible_sets_by_region
+        - credible_sets_locus
+        - disease_hpo
+        - disease
+        - drug_warnings
+        - drug
+        - enhancer_to_gene
+        - evidence
+        - evidence_by_variant
+        - evidence_by_disease_and_target
+        - gene_ontology
+        - hpo
+        - interaction
+        - l2g_predictions
+        - literature_entity_lut
+        - mechanism_of_action
+        - ml_w2v
+        - mouse_phenotypes
+        - openfda_faers
+        - otar_projects
+        - pharmacogenomics_by_drug
+        - pharmacogenomics_by_target
+        - pharmacogenomics_by_variant
+        - protein_coding_coords_by_target
+        - protein_coding_coords_by_variant
+        - sequence_ontology
+        - studies
+        - target_essentiality
+        - target_prioritisation
+        - targets
+        - variants
+        - clinical_indication_disease
+        - clinical_indication_drug
+        - clinical_report
+        - clinical_target
       do:
         - name: clickhouse_backup table ${each}
           requires:

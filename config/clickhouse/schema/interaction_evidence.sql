@@ -8,12 +8,7 @@ CREATE TABLE if not exists interaction_evidence_log (
     hostOrganismTissue Tuple (
         fullName Nullable (String),
         shortName Nullable (String),
-        xrefs Array (
-            Tuple (
-                database LowCardinality (String),
-                identifier LowCardinality (String)
-            )
-        )
+        xrefs Array (String)
     ),
     interactionDetectionMethodMiIdentifier String,
     interactionDetectionMethodShortName String,
