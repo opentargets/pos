@@ -9,7 +9,7 @@ CREATE TABLE if not exists targets_log (
         `chromosome` LowCardinality (String),
         `start` Int32,
         `end` Int32,
-        `strand` Enum ('-1', '0', '1'),
+        `strand` Enum8 ('-1' = -1, '0' = 0, '1' = 1),
     ),
     `chemicalProbes` Array (
         Tuple (
@@ -54,7 +54,7 @@ CREATE TABLE if not exists targets_log (
         `chromosome` LowCardinality (String),
         `start` UInt32,
         `end` UInt32,
-        `strand` Enum ('-1', '0', '1'),
+        `strand` Enum8 ('-1' = -1, '0' = 0, '1' = 1),
     ),
     `go` Array (
         Tuple (
