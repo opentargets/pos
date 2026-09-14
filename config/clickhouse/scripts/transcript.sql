@@ -1,6 +1,107 @@
 CREATE TABLE if not exists transcript engine = EmbeddedRocksDB () primary key targetId as (
-    select *
+    select
+        targetId,
+        groupArray(
+            (transcriptId,
+            biotype,
+            proteinId,
+            uniprotSwissprotIds,
+            uniprotTremblIds,
+            uniprotIsoformIds,
+            alphafoldIds,
+            isEnsemblCanonical,
+            chromosome,
+            start,
+            end,
+            strand,
+            transcriptionStartSite,
+            flags,
+            exons
+        )::Tuple(
+            transcriptId String,
+            biotype LowCardinality(String),
+            proteinId Nullable(String),
+            uniprotSwissprotIds Array(String),
+            uniprotTremblIds Array(String),
+            uniprotIsoformIds Array(String),
+            alphafoldIds Array(String),
+            isEnsemblCanonical Boolean,
+            chromosome Enum (
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7',
+                '8',
+                '9',
+                '10',
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+                '16',
+                '17',
+                '18',
+                '19',
+                '20',
+                '21',
+                '22',
+                'X',
+                'Y',
+                'MT'
+            ),
+            start UInt32,
+            end UInt32,
+            strand Enum8 ('-1' = -1, '0' = 0, '1' = 1),
+            transcriptionStartSite UInt32,
+            flags Array(
+                Tuple(
+                    `label` Nullable(String),
+                    `value` Nullable(String)
+                )
+            ),
+            exons Array(
+                Tuple(
+                    exonId String,
+                    chromosome Enum (
+                        '1',
+                        '2',
+                        '3',
+                        '4',
+                        '5',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '10',
+                        '11',
+                        '12',
+                        '13',
+                        '14',
+                        '15',
+                        '16',
+                        '17',
+                        '18',
+                        '19',
+                        '20',
+                        '21',
+                        '22',
+                        'X',
+                        'Y',
+                        'MT'
+                    ),
+                    start UInt32,
+                    end UInt32,
+                    strand Enum8 ('-1' = -1, '0' = 0, '1' = 1),
+                )
+            )
+            )
+        ) as transcripts
     from transcript_log
+    group by targetId
 );
 
 DROP TABLE IF EXISTS transcript_log SYNC;
