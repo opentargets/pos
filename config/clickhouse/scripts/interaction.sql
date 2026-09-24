@@ -10,6 +10,7 @@ ORDER BY (targetA) SETTINGS allow_nullable_key = 1 AS (
                     e.interactionDetectionMethodMiIdentifier,
                     e.interactionDetectionMethodShortName,
                     e.interactionIdentifier,
+                    e.interactionResources,
                     e.interactionTypeMiIdentifier,
                     e.interactionTypeShortName,
                     e.participantDetectionMethodA,
@@ -73,6 +74,10 @@ CREATE TABLE IF NOT EXISTS interaction ENGINE = EmbeddedRocksDB () PRIMARY KEY t
                     interactionDetectionMethodMiIdentifier String,
                     interactionDetectionMethodShortName String,
                     interactionIdentifier Nullable (String),
+                    interactionResources Tuple (
+                        databaseVersion LowCardinality (String),
+                        sourceDatabase LowCardinality (String)
+                    ),
                     interactionTypeMiIdentifier Nullable (String),
                     interactionTypeShortName Nullable (String),
                     participantDetectionMethodA Array (Tuple (
