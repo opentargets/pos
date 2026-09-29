@@ -33,7 +33,7 @@ function install_packages() {
     # Install packages
     apt-get remove -y --purge man-db
     apt-get update -y
-    apt-get install -y wget vim curl git htop pigz ca-certificates gnupg lsb-release zip unzip
+    apt-get install -y wget vim curl git htop pigz ca-certificates gnupg lsb-release zip unzip rsync
 
     # Install Java with SDKMAN (required for croissant)
     curl -s "https://get.sdkman.io?ci=true" | bash
@@ -117,6 +117,13 @@ mount_disk ${CLICKHOUSE_DISK_NAME} /mnt/clickhouse ${FORMAT_CH_DISK}
 create_dir_for_group /mnt/opensearch/data google-sudoers rw
 create_dir_for_group /mnt/clickhouse/data google-sudoers rw
 copy_clickhouse_configs
+# Compact disks are always empty on creation, so always format them
+if [[ -n "${OPENSEARCH_COMPACT_DISK_NAME}" ]]; then
+  mount_disk ${OPENSEARCH_COMPACT_DISK_NAME} /mnt/opensearch-compact true
+fi
+if [[ -n "${CLICKHOUSE_COMPACT_DISK_NAME}" ]]; then
+  mount_disk ${CLICKHOUSE_COMPACT_DISK_NAME} /mnt/clickhouse-compact true
+fi
 
 uv_run ${STEP} ${NUM_PROCESSES} > /var/log/pos.log 2>&1
 
