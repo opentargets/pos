@@ -38,6 +38,17 @@ resource "google_compute_disk" "open_search_data_disk" {
   snapshot    = var.open_search_snapshot_source
 }
 
+// Create smaller disks to rsync the final data to, so the snapshots can be restored to a disk just big enough
+resource "google_compute_disk" "compact_disk" {
+  for_each    = local.compact_disks
+  project     = "open-targets-eu-dev"
+  name        = each.key
+  description = each.value.description
+  type        = "pd-ssd"
+  size        = each.value.size
+  labels      = local.base_labels
+}
+
 // Create a VM instance for the POS service
 resource "google_compute_instance" "posvm" {
   name         = "posvm-${random_string.posvm.result}"
@@ -64,6 +75,15 @@ resource "google_compute_instance" "posvm" {
     device_name = var.open_search_disk_name
   }
 
+  // Attach compact disks, if any
+  dynamic "attached_disk" {
+    for_each = google_compute_disk.compact_disk
+    content {
+      source      = attached_disk.value.self_link
+      device_name = attached_disk.key
+    }
+  }
+
   network_interface {
     network = "default"
     access_config {
@@ -76,16 +96,18 @@ resource "google_compute_instance" "posvm" {
     startup-script = templatefile(
       "startup.sh",
       {
-        POS_USER_NAME = local.posvm_remote_user_name
-        BRANCH        = var.pos_git_branch
-        OPENSEARCH_DISK_NAME = var.open_search_disk_name
-        CLICKHOUSE_DISK_NAME = var.clickhouse_disk_name
-        FORMAT_OS_DISK       = var.open_search_snapshot_source == null ? "true" : "false"
-        FORMAT_CH_DISK       = var.clickhouse_snapshot_source == null ? "true" : "false"
-        STEP                 = var.pos_step
-        NUM_PROCESSES        = var.pos_num_processes
-        TIMESTAMP            = local.timestamp
-        SHUTDOWN_AFTER_RUN   = var.pos_shutdown_after_run
+        POS_USER_NAME                = local.posvm_remote_user_name
+        BRANCH                       = var.pos_git_branch
+        OPENSEARCH_DISK_NAME         = var.open_search_disk_name
+        CLICKHOUSE_DISK_NAME         = var.clickhouse_disk_name
+        FORMAT_OS_DISK               = var.open_search_snapshot_source == null ? "true" : "false"
+        FORMAT_CH_DISK               = var.clickhouse_snapshot_source == null ? "true" : "false"
+        OPENSEARCH_COMPACT_DISK_NAME = var.open_search_compact_disk_size == null ? "" : local.open_search_compact_disk_name
+        CLICKHOUSE_COMPACT_DISK_NAME = var.clickhouse_compact_disk_size == null ? "" : local.clickhouse_compact_disk_name
+        STEP                         = var.pos_step
+        NUM_PROCESSES                = var.pos_num_processes
+        TIMESTAMP                    = local.timestamp
+        SHUTDOWN_AFTER_RUN           = var.pos_shutdown_after_run
       }
     )
     ssh-keys               = "${local.posvm_remote_user_name}:${tls_private_key.posvm.public_key_openssh}"
@@ -94,8 +116,8 @@ resource "google_compute_instance" "posvm" {
       "s3_config.tftpl",
       {
         GCS_BASE_PATH = var.clickhouse_backup_base_path
-        ACCESS_KEY = google_storage_hmac_key.key.access_id
-        SECRET_KEY = google_storage_hmac_key.key.secret
+        ACCESS_KEY    = google_storage_hmac_key.key.access_id
+        SECRET_KEY    = google_storage_hmac_key.key.secret
       }
     )
   }

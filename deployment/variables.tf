@@ -34,6 +34,18 @@ variable "clickhouse_snapshot_source" {
   default     = null
 }
 
+variable "clickhouse_compact_disk_name" {
+  description = "Name of the compact Clickhouse disk the data is rsynced to before snapshotting, default '<clickhouse_disk_name>-compact'"
+  type        = string
+  default     = null
+}
+
+variable "clickhouse_compact_disk_size" {
+  description = "Size of the compact Clickhouse disk. Leave null to not create it and snapshot the data disk directly"
+  type        = string
+  default     = null
+}
+
 variable "clickhouse_backup_base_path" {
   description = "Base path in GCS bucket where ClickHouse backups will be stored"
   type        = string
@@ -54,6 +66,18 @@ variable "open_search_data_disk_size" {
 
 variable "open_search_snapshot_source" {
   description = "Snapshot to use for OpenSearch data disk source"
+  type        = string
+  default     = null
+}
+
+variable "open_search_compact_disk_name" {
+  description = "Name of the compact OpenSearch disk the data is rsynced to before snapshotting, default '<open_search_disk_name>-compact'"
+  type        = string
+  default     = null
+}
+
+variable "open_search_compact_disk_size" {
+  description = "Size of the compact OpenSearch disk. Leave null to not create it and snapshot the data disk directly"
   type        = string
   default     = null
 }
