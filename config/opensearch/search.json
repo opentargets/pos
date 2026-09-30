@@ -61,6 +61,10 @@
             "split_on_numerics": false,
             "preserve_original": true,
             "stem_english_possesive": true
+          },
+          "min_length_2": {
+            "type": "length",
+            "min": 2
           }
         },
         "char_filter": {
@@ -90,7 +94,7 @@
             "type": "custom",
             "tokenizer": "keyword",
             "char_filter": ["normalize_delimiters"],
-            "filter": ["lowercase", "trim"]
+            "filter": ["lowercase", "trim", "min_length_2"]
           }
         }
       }
