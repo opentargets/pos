@@ -41,7 +41,33 @@ CREATE TABLE if not exists targets engine = EmbeddedRocksDB () primary key id as
 CREATE TABLE if not exists targets_by_region engine = MergeTree
 order by (chromosome, start, end) as (
     select
-        genomicLocation.chromosome as chromosome,
+        cast(genomicLocation.chromosome as Enum(
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7',
+                '8',
+                '9',
+                '10',
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+                '16',
+                '17',
+                '18',
+                '19',
+                '20',
+                '21',
+                '22',
+                'X',
+                'Y',
+                'MT'
+            )) as chromosome,
         genomicLocation.start as start,
         genomicLocation.end as end,
         tuple(

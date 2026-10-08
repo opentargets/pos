@@ -10,15 +10,15 @@ scratchpad:
   database_namespace: platform2609 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2609-os
-  opensearch_disk_snapshot_name: platform-2609-os
-  clickhouse_disk_name: platform-2609-ch
-  clickhouse_disk_snapshot_name: platform-2609-ch
+  opensearch_disk_name: platform-2609-os-rs1
+  opensearch_disk_snapshot_name: platform-2609-os-rs1
+  clickhouse_disk_name: platform-2609-ch-rs1
+  clickhouse_disk_snapshot_name: platform-2609-ch-rs1
   # Compact disks: the data is rsynced to these smaller disks and they are snapshotted instead, so the
   # snapshot can be restored to a disk just big enough. Must match the terraform compact disk names
   # (default '<disk_name>-compact'). Leave empty to snapshot the data disks directly.
-  opensearch_compact_disk_name: ''
-  clickhouse_compact_disk_name: ''
+  opensearch_compact_disk_name: 'platform-2609-os-rs1-compact'
+  clickhouse_compact_disk_name: 'platform-2609-ch-rs1-compact'
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
@@ -163,7 +163,6 @@ steps:
         - so
         - target_essentiality
         - transcript
-        - variants
         - w2v
         - clinical_indication
         - clinical_report
@@ -183,6 +182,12 @@ steps:
       requires:
         - clickhouse_load clickhouse load interaction_evidence
       dataset: interaction
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load variants
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+      dataset: variants
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load studies

@@ -155,7 +155,6 @@ steps:
         - so
         - target_essentiality
         - transcript
-        - variants
         - w2v
         - clinical_indication
         - clinical_report
@@ -175,6 +174,12 @@ steps:
       requires:
         - clickhouse_load clickhouse load interaction_evidence
       dataset: interaction
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load variants
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+      dataset: variants
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load studies
