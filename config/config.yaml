@@ -10,15 +10,15 @@ scratchpad:
   database_namespace: platform2609 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2609-os-rs1
-  opensearch_disk_snapshot_name: platform-2609-os-rs1
-  clickhouse_disk_name: platform-2609-ch-rs1
-  clickhouse_disk_snapshot_name: platform-2609-ch-rs1
+  opensearch_disk_name: platform-2609-os-rs3
+  opensearch_disk_snapshot_name: platform-2609-os-rs3
+  clickhouse_disk_name: platform-2609-ch-rs3
+  clickhouse_disk_snapshot_name: platform-2609-ch-rs3
   # Compact disks: the data is rsynced to these smaller disks and they are snapshotted instead, so the
   # snapshot can be restored to a disk just big enough. Must match the terraform compact disk names
   # (default '<disk_name>-compact'). Leave empty to snapshot the data disks directly.
-  opensearch_compact_disk_name: 'platform-2609-os-rs1-compact'
-  clickhouse_compact_disk_name: 'platform-2609-ch-rs1-compact'
+  # opensearch_compact_disk_name: 'platform-2609-os-rs2-compact'
+  # clickhouse_compact_disk_name: 'platform-2609-ch-rs2-compact'
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
@@ -214,6 +214,15 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load gwas_credible_sets_by_variant
+      requires:
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load disease
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load l2g_predictions
+      dataset: gwas_credible_sets_by_variant
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
@@ -223,6 +232,8 @@ steps:
         - clickhouse_load clickhouse load disease
         - clickhouse_load clickhouse load aotf
         - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load gwas_credible_sets_by_variant
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:
@@ -477,6 +488,12 @@ steps:
       dataset: interaction
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load variants
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+      dataset: variants
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load studies
       requires:
         - clickhouse_load clickhouse load credible_sets
@@ -501,6 +518,15 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load gwas_credible_sets_by_variant
+      requires:
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load disease
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load l2g_predictions
+      dataset: gwas_credible_sets_by_variant
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
@@ -510,6 +536,8 @@ steps:
         - clickhouse_load clickhouse load disease
         - clickhouse_load clickhouse load aotf
         - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load gwas_credible_sets_by_variant
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:

@@ -10,7 +10,8 @@ SELECT
     lower(diseaseData) AS searchA,
     lower(targetData) AS searchB,
     noveltyDirect,
-    noveltyIndirect
+    noveltyIndirect,
+    CAST([], 'Array(String)') AS indirect
 FROM associations_otf_log;
 
 CREATE TABLE IF NOT EXISTS associations_otf_target ENGINE = MergeTree ()
@@ -29,7 +30,8 @@ SELECT
         'EFO_0001444'
     ) as isMeasurement,
     noveltyDirect,
-    noveltyIndirect
+    noveltyIndirect,
+    ancestors AS indirect
 FROM
     associations_otf_log
     LEFT OUTER JOIN disease_log ON associations_otf_log.diseaseId = disease_log.id;

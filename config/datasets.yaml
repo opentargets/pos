@@ -213,6 +213,12 @@ clickhouse:
     input_dir: output/variant
     preload_script: config/clickhouse/schema/variants.sql
     postload_script: config/clickhouse/scripts/variants.sql
+  # Derived table built from already loaded tables, nothing is ingested:
+  # input_dir does not exist so no files are inserted and table is never used.
+  gwas_credible_sets_by_variant:
+    table: gwas_credible_sets_by_variant
+    input_dir: derived/gwas_credible_sets_by_variant
+    preload_script: config/clickhouse/scripts/gwas_credible_sets_by_variant.sql
   clinical_indication:
     table: clinical_indication_log
     input_dir: output/clinical_indication
