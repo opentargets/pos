@@ -30,12 +30,21 @@ order by (geneId) SETTINGS allow_nullable_key = 1 as (
 
 -- create the targets table indexed by id
 -- and join credible_sets_by_gene to get array(studyLocusIds) for each target
+-- and pharmacogenomics to get array(pharmacogenomicsIds) for each target
 
 CREATE TABLE if not exists targets engine = EmbeddedRocksDB () primary key id as (
-    select * except geneId
+    select * except (geneId, pgxTargetId)
     from
         targets_log
         left outer join credible_sets_by_gene on targets_log.id = credible_sets_by_gene.geneId
+        left outer join (
+            select
+                assumeNotNull(targetFromSourceId) as pgxTargetId,
+                groupArray(rowId) as pharmacogenomicsIds
+            from pharmacogenomics
+            where targetFromSourceId is not null
+            group by pgxTargetId
+        ) as pgx on targets_log.id = pgx.pgxTargetId
 );
 
 CREATE TABLE if not exists targets_by_region engine = MergeTree

@@ -136,7 +136,6 @@ steps:
         - credible_sets
         - colocalisation
         - disease_hpo
-        - drug
         - drug_warnings
         - enhancer_to_gene
         - evidence
@@ -178,6 +177,7 @@ steps:
       data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load variants
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load credible_sets
       dataset: variants
       clickhouse_database: ${database_namespace}
@@ -188,8 +188,15 @@ steps:
       dataset: studies
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load drug
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+      dataset: drug
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load targets
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load studies
       dataset: targets
       clickhouse_database: ${database_namespace}
@@ -209,6 +216,7 @@ steps:
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
+        - clickhouse_load clickhouse load drug
         - clickhouse_load clickhouse target_prioritisation
         - clickhouse_load clickhouse load interaction
         - clickhouse_load clickhouse load studies
@@ -459,8 +467,15 @@ steps:
       dataset: studies
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load drug
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+      dataset: drug
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load targets
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load studies
       dataset: targets
       clickhouse_database: ${database_namespace}
@@ -480,6 +495,7 @@ steps:
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
+        - clickhouse_load clickhouse load drug
         - clickhouse_load clickhouse target_prioritisation
         - clickhouse_load clickhouse load interaction
         - clickhouse_load clickhouse load studies
@@ -559,9 +575,7 @@ steps:
         - mouse_phenotypes
         - openfda_faers
         - otar_projects
-        - pharmacogenomics_by_drug
-        - pharmacogenomics_by_target
-        - pharmacogenomics_by_variant
+        - pharmacogenomics
         - protein_coding_coords_by_target
         - protein_coding_coords_by_variant
         - sequence_ontology
@@ -626,8 +640,15 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load drug
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+      dataset: drug
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load targets
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load credible_sets
         - clickhouse_load clickhouse load studies
       dataset: targets
