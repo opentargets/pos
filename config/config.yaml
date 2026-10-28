@@ -10,10 +10,10 @@ scratchpad:
   database_namespace: platform2609 # e.g. platform2512
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2609-os-rs3
-  opensearch_disk_snapshot_name: platform-2609-os-rs3
-  clickhouse_disk_name: platform-2609-ch-rs3
-  clickhouse_disk_snapshot_name: platform-2609-ch-rs3
+  opensearch_disk_name: platform-2609-os-rs4
+  opensearch_disk_snapshot_name: platform-2609-os-rs4
+  clickhouse_disk_name: platform-2609-ch-rs4
+  clickhouse_disk_snapshot_name: platform-2609-ch-rs4
   # Compact disks: the data is rsynced to these smaller disks and they are snapshotted instead, so the
   # snapshot can be restored to a disk just big enough. Must match the terraform compact disk names
   # (default '<disk_name>-compact'). Leave empty to snapshot the data disks directly.
@@ -145,7 +145,6 @@ steps:
         - credible_sets
         - colocalisation
         - disease_hpo
-        - drug
         - drug_warnings
         - enhancer_to_gene
         - evidence
@@ -186,6 +185,7 @@ steps:
       data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load variants
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load credible_sets
       dataset: variants
       clickhouse_database: ${database_namespace}
@@ -196,8 +196,15 @@ steps:
       dataset: studies
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load drug
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+      dataset: drug
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load targets
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load studies
       dataset: targets
       clickhouse_database: ${database_namespace}
@@ -226,6 +233,7 @@ steps:
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
+        - clickhouse_load clickhouse load drug
         - clickhouse_load clickhouse target_prioritisation
         - clickhouse_load clickhouse load interaction
         - clickhouse_load clickhouse load studies
@@ -490,6 +498,7 @@ steps:
       data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load variants
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load credible_sets
       dataset: variants
       clickhouse_database: ${database_namespace}
@@ -500,8 +509,15 @@ steps:
       dataset: studies
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load drug
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+      dataset: drug
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load targets
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load studies
       dataset: targets
       clickhouse_database: ${database_namespace}
@@ -530,6 +546,7 @@ steps:
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
+        - clickhouse_load clickhouse load drug
         - clickhouse_load clickhouse target_prioritisation
         - clickhouse_load clickhouse load interaction
         - clickhouse_load clickhouse load studies
@@ -611,9 +628,7 @@ steps:
         - mouse_phenotypes
         - openfda_faers
         - otar_projects
-        - pharmacogenomics_by_drug
-        - pharmacogenomics_by_target
-        - pharmacogenomics_by_variant
+        - pharmacogenomics
         - protein_coding_coords_by_target
         - protein_coding_coords_by_variant
         - sequence_ontology
@@ -677,8 +692,15 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load drug
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+      dataset: drug
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load targets
       requires:
+        - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load credible_sets
         - clickhouse_load clickhouse load studies
       dataset: targets
