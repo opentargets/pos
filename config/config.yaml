@@ -17,8 +17,8 @@ scratchpad:
   # Compact disks: the data is rsynced to these smaller disks and they are snapshotted instead, so the
   # snapshot can be restored to a disk just big enough. Must match the terraform compact disk names
   # (default '<disk_name>-compact'). Leave empty to snapshot the data disks directly.
-  # opensearch_compact_disk_name: 'platform-2609-os-rs2-compact'
-  # clickhouse_compact_disk_name: 'platform-2609-ch-rs2-compact'
+  # opensearch_compact_disk_name: 'platform-2609-os-rs4-compact'
+  # clickhouse_compact_disk_name: 'platform-2609-ch-rs4-compact'
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases

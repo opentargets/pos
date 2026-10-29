@@ -285,6 +285,7 @@ def remote(
         'pos_step': step,
         'pos_config_file': str(config.absolute()),
         'pos_shutdown_after_run': str(shutdown_after_run).lower(),
+        **_compact_disk_tfvars(config),
     }
     if opensearch_from_snapshot:
         tfvars_dict.update({'open_search_snapshot_source': opensearch_from_snapshot})
@@ -354,6 +355,7 @@ def backend(
         'pos_git_branch': pos_branch,
         'pos_step': 'backend',
         'pos_config_file': str(config.absolute()),
+        **_compact_disk_tfvars(config),
     }
     terraform = TerraformRunner(tfdir)
     for key, value in tfvar:
@@ -639,6 +641,23 @@ def restore_opensearch(
                 pos_runner()
     elif click.confirm('Restore OpenSearch from latest backup? (no ssh tunnel established)'):
         pos_runner()
+
+
+def _compact_disk_tfvars(config: Path) -> dict[str, str]:
+    """Terraform vars for the compact disks set in the POS config.
+
+    The snapshot tasks read the same config values, so the disks are only used when terraform creates them.
+    """
+    scratchpad = get_config(str(config)).scratchpad
+    tfvars: dict[str, str] = {}
+    for config_key, tfvar_key in (
+        ('opensearch_compact_disk_size', 'open_search_compact_disk_size'),
+        ('clickhouse_compact_disk_size', 'clickhouse_compact_disk_size'),
+    ):
+        size = scratchpad.get(config_key)
+        if size not in (None, ''):
+            tfvars[tfvar_key] = str(size)
+    return tfvars
 
 
 @disable_logger('otter.storage.google')

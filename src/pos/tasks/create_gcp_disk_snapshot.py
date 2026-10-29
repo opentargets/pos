@@ -8,7 +8,7 @@ from typing import Self
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
 from otter.util.errors import OtterError
-from pydantic import model_validator
+from pydantic import PositiveInt, field_validator, model_validator
 
 from pos.gcp.labels import GCPLabels
 from pos.gcp.snapshot_disk import GCPSnapshotDisk
@@ -31,18 +31,34 @@ class CreateGcpDiskSnapshotSpec(Spec):
     gcp_labels_subteam: str = 'backend'
     gcp_labels_product: str = 'platform'
     gcp_labels_tool: str = 'pos'
-    # Optional smaller disk the data is rsynced to and snapshotted instead of the
-    # data disk, so the snapshot can be restored to a disk just big enough for it.
-    # Leave compact_disk_name empty to snapshot the data disk directly.
-    compact_disk_name: str = ''
-    compact_mount_point: str = ''  # '/mnt/opensearch-compact' or '/mnt/clickhouse-compact'
+    compact_disk_size: PositiveInt | None = None
     source_mount_point: str = ''  # root of the data disk: '/mnt/opensearch' or '/mnt/clickhouse'
+
+    @field_validator('compact_disk_size', mode='before')
+    @classmethod
+    def _empty_size_is_none(cls, value: object) -> object:
+        # scratchpad substitution turns an unset value into '' or 'None'
+        if isinstance(value, str) and value.strip().lower() in {'', 'none', 'null'}:
+            return None
+        return value
 
     @model_validator(mode='after')
     def _check_compact_disk_fields(self) -> Self:
-        if self.compact_disk_name and not (self.compact_mount_point and self.source_mount_point):
-            raise ValueError('compact_disk_name requires compact_mount_point and source_mount_point')
+        if self.compact_disk_size and not self.source_mount_point:
+            raise ValueError('compact_disk_size requires source_mount_point')
         return self
+
+    @property
+    def use_compact_disk(self) -> bool:
+        return self.compact_disk_size is not None
+
+    @property
+    def compact_disk_name(self) -> str:
+        return f'{self.gcp_disk_name}-compact'
+
+    @property
+    def compact_mount_point(self) -> str:
+        return f'{self.source_mount_point.rstrip("/")}-compact'
 
 
 class CreateGcpDiskSnapshot(Task):
@@ -54,7 +70,7 @@ class CreateGcpDiskSnapshot(Task):
     @report
     def run(self) -> Task:
         disk_name, trim_mount_point = self.spec.gcp_disk_name, self.spec.mount_point
-        if self.spec.compact_disk_name:
+        if self.spec.use_compact_disk:
             disk_name, trim_mount_point = self.spec.compact_disk_name, self.spec.compact_mount_point
         snapshot = GCPSnapshotDisk(
             project_id=self.spec.gcp_project_id,
@@ -66,7 +82,7 @@ class CreateGcpDiskSnapshot(Task):
         )
         try:
             self._complete_pending_disk_writes()
-            if self.spec.compact_disk_name:
+            if self.spec.use_compact_disk:
                 self._copy_to_compact_disk()
                 self._complete_pending_disk_writes()
             self._discard_unused_disk_blocks(trim_mount_point)
@@ -98,7 +114,7 @@ class CreateGcpDiskSnapshot(Task):
                 '--exclude',
                 '/lost+found',
                 f'{self.spec.source_mount_point.rstrip("/")}/',
-                f'{self.spec.compact_mount_point.rstrip("/")}/',
+                f'{self.spec.compact_mount_point}/',
             ],
             check=True,
         )
