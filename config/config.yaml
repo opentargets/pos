@@ -14,11 +14,11 @@ scratchpad:
   opensearch_disk_snapshot_name: platform-2609-os-rs4
   clickhouse_disk_name: platform-2609-ch-rs4
   clickhouse_disk_snapshot_name: platform-2609-ch-rs4
-  # Compact disks: the data is rsynced to these smaller disks and they are snapshotted instead, so the
-  # snapshot can be restored to a disk just big enough. Must match the terraform compact disk names
-  # (default '<disk_name>-compact'). Leave empty to snapshot the data disks directly.
-  # opensearch_compact_disk_name: 'platform-2609-os-rs4-compact'
-  # clickhouse_compact_disk_name: 'platform-2609-ch-rs4-compact'
+  # Compact disks (size in GB): the data is rsynced to these smaller disks and they are snapshotted
+  # instead, so the snapshot can be restored to a disk just big enough. They are created by terraform
+  # as "<disk_name>-compact". Must fit the final database data. Leave empty to snapshot the data disks directly.
+  opensearch_compact_disk_size: 60
+  clickhouse_compact_disk_size: 170
   # ========================= THESE VALUES RARELY NEED CHANGING ===========================
   disk_snapshot_project_id: open-targets-eu-dev
   release_gcs_bucket: gs://open-targets-data-releases
@@ -124,8 +124,7 @@ steps:
       gcp_disk_zone: europe-west1-d
       mount_point: ${opensearch_data}
       source_mount_point: /mnt/opensearch
-      compact_disk_name: ${opensearch_compact_disk_name}
-      compact_mount_point: /mnt/opensearch-compact
+      compact_disk_size: ${opensearch_compact_disk_size}
       requires:
         - open_search_stop data loading instance
     # clickhouse
@@ -252,8 +251,7 @@ steps:
       gcp_disk_zone: europe-west1-d
       mount_point: ${clickhouse_data}
       source_mount_point: /mnt/clickhouse
-      compact_disk_name: ${clickhouse_compact_disk_name}
-      compact_mount_point: /mnt/clickhouse-compact
+      compact_disk_size: ${clickhouse_compact_disk_size}
     # exports
     - name: explode_data_prep search_ebi_associations
       dataset: search_ebi_associations
@@ -367,8 +365,7 @@ steps:
       gcp_disk_zone: europe-west1-d
       mount_point: ${opensearch_data}
       source_mount_point: /mnt/opensearch
-      compact_disk_name: ${opensearch_compact_disk_name}
-      compact_mount_point: /mnt/opensearch-compact
+      compact_disk_size: ${opensearch_compact_disk_size}
       requires:
         - open_search_stop data loading instance
   ################################################################################################
@@ -389,8 +386,7 @@ steps:
       gcp_disk_zone: europe-west1-d
       mount_point: ${opensearch_data}
       source_mount_point: /mnt/opensearch
-      compact_disk_name: ${opensearch_compact_disk_name}
-      compact_mount_point: /mnt/opensearch-compact
+      compact_disk_size: ${opensearch_compact_disk_size}
   opensearch_snapshot: # create a snapshot of the opensearch data NOT the disk.
     - name: open_search_start data loading instance
       volume_data: ${opensearch_data}
@@ -565,8 +561,7 @@ steps:
       gcp_disk_zone: europe-west1-d
       mount_point: ${clickhouse_data}
       source_mount_point: /mnt/clickhouse
-      compact_disk_name: ${clickhouse_compact_disk_name}
-      compact_mount_point: /mnt/clickhouse-compact
+      compact_disk_size: ${clickhouse_compact_disk_size}
   ################################################################################################
   # ClickHouse - Modular Steps
   ################################################################################################
@@ -589,8 +584,7 @@ steps:
       gcp_disk_zone: europe-west1-d
       mount_point: ${clickhouse_data}
       source_mount_point: /mnt/clickhouse
-      compact_disk_name: ${clickhouse_compact_disk_name}
-      compact_mount_point: /mnt/clickhouse-compact
+      compact_disk_size: ${clickhouse_compact_disk_size}
   clickhouse_backup_all:
     - name: clickhouse_start data loading instance
       volume_data: ${clickhouse_data}
