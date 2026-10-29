@@ -8,7 +8,7 @@ from typing import Self
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
 from otter.util.errors import OtterError
-from pydantic import PositiveInt, field_validator, model_validator
+from pydantic import field_validator, model_validator
 
 from pos.gcp.labels import GCPLabels
 from pos.gcp.snapshot_disk import GCPSnapshotDisk
@@ -31,26 +31,32 @@ class CreateGcpDiskSnapshotSpec(Spec):
     gcp_labels_subteam: str = 'backend'
     gcp_labels_product: str = 'platform'
     gcp_labels_tool: str = 'pos'
-    compact_disk_size: PositiveInt | None = None
+    # A string, as otter validates the spec once before replacing '${...}' placeholders.
+    compact_disk_size: str = ''
     source_mount_point: str = ''  # root of the data disk: '/mnt/opensearch' or '/mnt/clickhouse'
 
     @field_validator('compact_disk_size', mode='before')
     @classmethod
-    def _empty_size_is_none(cls, value: object) -> object:
+    def _normalise_size(cls, value: object) -> str:
         # scratchpad substitution turns an unset value into '' or 'None'
-        if isinstance(value, str) and value.strip().lower() in {'', 'none', 'null'}:
-            return None
-        return value
+        if value is None or str(value).strip().lower() in {'', 'none', 'null'}:
+            return ''
+        return str(value).strip()
 
     @model_validator(mode='after')
     def _check_compact_disk_fields(self) -> Self:
-        if self.compact_disk_size and not self.source_mount_point:
+        size = self.compact_disk_size
+        if not size or '${' in size:  # unset, or a placeholder not replaced yet
+            return self
+        if not size.isdigit() or int(size) <= 0:
+            raise ValueError(f'compact_disk_size must be a positive whole number of GB, got {size!r}')
+        if not self.source_mount_point:
             raise ValueError('compact_disk_size requires source_mount_point')
         return self
 
     @property
     def use_compact_disk(self) -> bool:
-        return self.compact_disk_size is not None
+        return bool(self.compact_disk_size)
 
     @property
     def compact_disk_name(self) -> str:
