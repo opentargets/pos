@@ -7,7 +7,7 @@ variable "vm_pos_boot_disk_size" {
 variable "vm_pos_machine_type" {
   description = "Machine type for POS vm, default 'n2-highmem-96'"
   type        = string
-  default     = "n2-standard-16"
+  default     = "n2-highmem-96"
 }
 
 variable "pos_logs_path_root" {
@@ -34,14 +34,8 @@ variable "clickhouse_snapshot_source" {
   default     = null
 }
 
-variable "clickhouse_compact_disk_name" {
-  description = "Name of the compact Clickhouse disk the data is rsynced to before snapshotting, default '<clickhouse_disk_name>-compact'"
-  type        = string
-  default     = null
-}
-
 variable "clickhouse_compact_disk_size" {
-  description = "Size of the compact Clickhouse disk. Leave null to not create it and snapshot the data disk directly"
+  description = "Size of the compact Clickhouse disk, set from the POS config by `pos remote` and `pos backend`. Leave null to not create it and snapshot the data disk directly"
   type        = string
   default     = null
 }
@@ -70,14 +64,8 @@ variable "open_search_snapshot_source" {
   default     = null
 }
 
-variable "open_search_compact_disk_name" {
-  description = "Name of the compact OpenSearch disk the data is rsynced to before snapshotting, default '<open_search_disk_name>-compact'"
-  type        = string
-  default     = null
-}
-
 variable "open_search_compact_disk_size" {
-  description = "Size of the compact OpenSearch disk. Leave null to not create it and snapshot the data disk directly"
+  description = "Size of the compact OpenSearch disk, set from the POS config by `pos remote` and `pos backend`. Leave null to not create it and snapshot the data disk directly"
   type        = string
   default     = null
 }
