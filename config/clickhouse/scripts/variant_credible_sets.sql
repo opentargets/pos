@@ -8,7 +8,7 @@
 -- NB: the load task splits on semicolons, so do not use them inside comments or strings.
 -- ORDER BY: (studyType, variantId) does the work for the lookup, the rest matches the
 -- default sort (most significant first).
-CREATE TABLE IF NOT EXISTS credible_sets_by_variant ENGINE = MergeTree ()
+CREATE TABLE IF NOT EXISTS variant_credible_sets ENGINE = MergeTree ()
 ORDER BY (studyType, variantId, pValueExponent, pValueMantissa, studyLocusId) AS
 WITH
     disease_with_ta AS (
@@ -87,7 +87,7 @@ WITH
             ) AS v ON cs.variantId = v.variantId
     )
 SELECT
-    toLowCardinality(studyType) AS studyType,
+    studyType,
     tupleElement(l, 'variantId') AS variantId,
     studyLocusId,
     tupleElement(l, 'posteriorProbability') AS posteriorProbability,
@@ -118,4 +118,4 @@ SELECT
 FROM sets
 ARRAY JOIN locus AS l;
 
-OPTIMIZE TABLE credible_sets_by_variant FINAL;
+OPTIMIZE TABLE variant_credible_sets FINAL;

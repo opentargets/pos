@@ -220,7 +220,7 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load credible_sets_by_variant
+    - name: clickhouse_load clickhouse load variant_credible_sets
       requires:
         - clickhouse_load clickhouse load credible_sets
         - clickhouse_load clickhouse load studies
@@ -228,7 +228,7 @@ steps:
         - clickhouse_load clickhouse load disease
         - clickhouse_load clickhouse load variants
         - clickhouse_load clickhouse load l2g_predictions
-      dataset: credible_sets_by_variant
+      dataset: variant_credible_sets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
     - name: clickhouse_stop data loading instance
@@ -242,7 +242,7 @@ steps:
         - clickhouse_load clickhouse load aotf
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load variants
-        - clickhouse_load clickhouse load credible_sets_by_variant
+        - clickhouse_load clickhouse load variant_credible_sets
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:
@@ -532,7 +532,7 @@ steps:
       dataset: aotf
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load credible_sets_by_variant
+    - name: clickhouse_load clickhouse load variant_credible_sets
       requires:
         - clickhouse_load clickhouse load credible_sets
         - clickhouse_load clickhouse load studies
@@ -540,7 +540,7 @@ steps:
         - clickhouse_load clickhouse load disease
         - clickhouse_load clickhouse load variants
         - clickhouse_load clickhouse load l2g_predictions
-      dataset: credible_sets_by_variant
+      dataset: variant_credible_sets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
     - name: clickhouse_stop data loading instance
@@ -554,7 +554,7 @@ steps:
         - clickhouse_load clickhouse load aotf
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load variants
-        - clickhouse_load clickhouse load credible_sets_by_variant
+        - clickhouse_load clickhouse load variant_credible_sets
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:
