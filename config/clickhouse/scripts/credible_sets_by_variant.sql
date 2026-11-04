@@ -1,14 +1,15 @@
--- Read model for the variant page GWAS credible sets table.
--- One fully denormalised row per (variant in locus, GWAS credible set) so the API can
+-- Read model for the variant page credible sets tables (all study types).
+-- One fully denormalised row per (variant in locus, credible set) so the API can
 -- filter and sort on any column with a single table query.
 -- Built from final tables only (the _log tables are dropped by earlier steps),
 -- so it must run after credible_sets, studies, disease, targets, variants and l2g_predictions.
--- Diseases are stored as parallel arrays (diseaseIds[i] has diseaseNames[i] and
--- diseaseTherapeuticAreaIds[i] / diseaseTherapeuticAreaNames[i]) to keep filtering simple.
+-- diseases holds (id, name) for each study disease.
+-- diseaseTherapeuticAreas is the distinct union of (id, name) across all of the study diseases.
 -- NB: the load task splits on semicolons, so do not use them inside comments or strings.
--- ORDER BY: variantId does the work, the rest matches the default sort (most significant first).
-CREATE TABLE IF NOT EXISTS gwas_credible_sets_by_variant ENGINE = MergeTree ()
-ORDER BY (variantId, pValueExponent, pValueMantissa, studyLocusId) AS
+-- ORDER BY: (studyType, variantId) does the work for the lookup, the rest matches the
+-- default sort (most significant first).
+CREATE TABLE IF NOT EXISTS credible_sets_by_variant ENGINE = MergeTree ()
+ORDER BY (studyType, variantId, pValueExponent, pValueMantissa, studyLocusId) AS
 WITH
     disease_with_ta AS (
         SELECT
@@ -32,7 +33,6 @@ WITH
                 SELECT studyId, traitFromSource, diseaseId
                 FROM studies
                 LEFT ARRAY JOIN diseaseIds AS diseaseId
-                WHERE studyType = 'gwas'
             ) AS sd
             LEFT JOIN disease_with_ta AS dt ON sd.diseaseId = dt.id
         GROUP BY sd.studyId
@@ -54,8 +54,9 @@ WITH
             ) AS l
             LEFT JOIN (SELECT id, approvedSymbol FROM targets) AS t ON l.geneId = t.id
     ),
-    gwas_sets AS (
+    sets AS (
         SELECT
+            cs.studyType AS studyType,
             cs.studyLocusId AS studyLocusId,
             cs.pValueMantissa AS pValueMantissa,
             cs.pValueExponent AS pValueExponent,
@@ -70,6 +71,7 @@ WITH
             cs.studyId AS studyId,
             si.traitFromSource AS traitFromSource,
             si.diseases AS diseases,
+            arraySort(arrayDistinct(arrayFlatten(arrayMap(d -> d.3, si.diseases)))) AS therapeuticAreas,
             tl.geneId AS topL2GGeneId,
             tl.approvedSymbol AS topL2GApprovedSymbol,
             tl.score AS topL2GScore,
@@ -83,9 +85,9 @@ WITH
                 SELECT variantId, referenceAllele, alternateAllele
                 FROM variants
             ) AS v ON cs.variantId = v.variantId
-        WHERE cs.studyType = 'gwas'
     )
 SELECT
+    toLowCardinality(studyType) AS studyType,
     tupleElement(l, 'variantId') AS variantId,
     studyLocusId,
     tupleElement(l, 'posteriorProbability') AS posteriorProbability,
@@ -102,20 +104,18 @@ SELECT
     leadAlternateAllele,
     studyId,
     toLowCardinality(traitFromSource) AS traitFromSource,
-    CAST(arrayMap(d -> d.1, diseases), 'Array(LowCardinality(String))') AS diseaseIds,
-    CAST(arrayMap(d -> d.2, diseases), 'Array(LowCardinality(String))') AS diseaseNames,
     CAST(
-        arrayMap(d -> arrayMap(ta -> ta.1, d.3), diseases),
-        'Array(Array(LowCardinality(String)))'
-    ) AS diseaseTherapeuticAreaIds,
+        arrayMap(d -> (d.1, d.2), diseases),
+        'Array(Tuple(id LowCardinality(String), name LowCardinality(String)))'
+    ) AS diseases,
     CAST(
-        arrayMap(d -> arrayMap(ta -> ta.2, d.3), diseases),
-        'Array(Array(LowCardinality(String)))'
-    ) AS diseaseTherapeuticAreaNames,
+        therapeuticAreas,
+        'Array(Tuple(id LowCardinality(String), name LowCardinality(String)))'
+    ) AS diseaseTherapeuticAreas,
     topL2GGeneId,
     toLowCardinality(topL2GApprovedSymbol) AS topL2GApprovedSymbol,
     topL2GScore
-FROM gwas_sets
+FROM sets
 ARRAY JOIN locus AS l;
 
-OPTIMIZE TABLE gwas_credible_sets_by_variant FINAL;
+OPTIMIZE TABLE credible_sets_by_variant FINAL;
