@@ -231,6 +231,15 @@ steps:
       dataset: variant_credible_sets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load study_credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load l2g_predictions
+      dataset: study_credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
@@ -243,6 +252,7 @@ steps:
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load variants
         - clickhouse_load clickhouse load variant_credible_sets
+        - clickhouse_load clickhouse load study_credible_sets
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:
@@ -543,6 +553,15 @@ steps:
       dataset: variant_credible_sets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load study_credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load l2g_predictions
+      dataset: study_credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_stop data loading instance
       requires:
         - explode load all datasets
@@ -555,6 +574,7 @@ steps:
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load variants
         - clickhouse_load clickhouse load variant_credible_sets
+        - clickhouse_load clickhouse load study_credible_sets
       clickhouse_database_name: ${database_namespace}
     - name: create_gcp_disk_snapshot clickhouse
       requires:

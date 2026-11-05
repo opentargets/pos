@@ -219,6 +219,10 @@ clickhouse:
     table: variant_credible_sets
     input_dir: derived/variant_credible_sets
     preload_script: config/clickhouse/scripts/variant_credible_sets.sql
+  study_credible_sets:
+    table: study_credible_sets
+    input_dir: derived/study_credible_sets
+    preload_script: config/clickhouse/scripts/study_credible_sets.sql
   clinical_indication:
     table: clinical_indication_log
     input_dir: output/clinical_indication
