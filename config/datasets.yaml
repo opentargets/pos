@@ -223,6 +223,10 @@ clickhouse:
     table: study_credible_sets
     input_dir: derived/study_credible_sets
     preload_script: config/clickhouse/scripts/study_credible_sets.sql
+  target_credible_sets:
+    table: target_credible_sets
+    input_dir: derived/target_credible_sets
+    preload_script: config/clickhouse/scripts/target_credible_sets.sql
   clinical_indication:
     table: clinical_indication_log
     input_dir: output/clinical_indication
