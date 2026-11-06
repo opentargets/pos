@@ -5,12 +5,17 @@
 -- so it must run after credible_sets, studies, disease, targets, variants and l2g_predictions.
 -- diseases holds (id, name) for each study disease.
 -- diseaseTherapeuticAreas is the distinct union of (id, name) across all of the study diseases.
+-- The topL2G fields are NULL when a credible set has no L2G predictions
+-- (and topL2GApprovedSymbol is also NULL when the gene is not in targets).
+-- topL2GScore is Nullable and in the sorting key, so allow_nullable_key is needed.
 -- NB: the load task splits on semicolons, so do not use them inside comments or strings.
 -- ORDER BY: (studyType, variantId) does the work for the lookup, the rest matches the
 -- default sort (most significant first).
 CREATE TABLE IF NOT EXISTS variant_credible_sets ENGINE = MergeTree()
 ORDER BY
-  (studyType, variantId, topL2GScore, studyLocusId) AS
+  (studyType, variantId, topL2GScore, studyLocusId)
+SETTINGS
+  allow_nullable_key = 1 AS
 WITH
   disease_with_ta AS (
     SELECT
@@ -105,9 +110,11 @@ WITH
       arraySort(
         arrayDistinct(arrayFlatten(arrayMap(d -> d .3, si.diseases)))
       ) AS therapeuticAreas,
-      tl.geneId AS topL2GGeneId,
-      tl.approvedSymbol AS topL2GApprovedSymbol,
-      tl.score AS topL2GScore,
+      -- top_l2g only has credible sets with predictions, so an unmatched join
+      -- (studyLocusId '') means there are none
+      if(tl.studyLocusId = '', NULL, tl.geneId) AS topL2GGeneId,
+      nullIf(tl.approvedSymbol, '') AS topL2GApprovedSymbol,
+      if(tl.studyLocusId = '', NULL, tl.score) AS topL2GScore,
       csl.locus AS locus,
       length(csl.locus) AS locusSize
     FROM
