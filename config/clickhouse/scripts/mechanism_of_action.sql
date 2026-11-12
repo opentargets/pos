@@ -7,12 +7,14 @@ CREATE TABLE IF NOT EXISTS mechanism_of_action ENGINE = EmbeddedRocksDB () PRIMA
             actionType,
             targetName,
             targets,
+            curation,
             references
             )::Tuple(
                 mechanismOfAction String,
                 actionType Nullable (String),
                 targetName Nullable (String),
                 targets Array (String),
+                curation String,
                 references Array (
                     Tuple (
                         ids Array (String),

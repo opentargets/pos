@@ -7,34 +7,34 @@
 -- Unmatched joins give default values ('' and 0), the same as variant_credible_sets,
 -- except the topL2G fields, which are NULL when a credible set has no L2G predictions
 -- (and topL2GApprovedSymbol is also NULL when the gene is not in targets).
--- topL2GScore is Nullable and in the sorting key, so allow_nullable_key is needed.
+-- topL2GScore and the p-value are Nullable and in the sorting key, so allow_nullable_key is needed.
 -- NB: the load task splits on semicolons, so do not use them inside comments or strings.
 -- ORDER BY: studyId does the work for the lookup, the rest matches the
--- default sort (topL2GScore).
+-- default sort (most significant first).
 CREATE TABLE IF NOT EXISTS study_credible_sets ENGINE = MergeTree()
 ORDER BY
   (
     studyId,
     pValueExponent,
     pValueMantissa,
-    studyLocusId
+    credibleSetId
   )
 SETTINGS
   allow_nullable_key = 1 AS
 SELECT
   cs.studyId AS studyId,
-  cs.studyLocusId AS studyLocusId,
-  cs.variantId AS leadVariantId,
+  cs.credibleSetId AS credibleSetId,
+  cs.leadVariantId AS leadVariantId,
   cs.chromosome AS leadChromosome,
-  cs.position AS leadPosition,
+  cs.leadPosition AS leadPosition,
   v.referenceAllele AS leadReferenceAllele,
   v.alternateAllele AS leadAlternateAllele,
-  cs.pValueMantissa AS pValueMantissa,
-  cs.pValueExponent AS pValueExponent,
-  cs.beta AS beta,
-  cs.finemappingMethod AS finemappingMethod,
+  cs.leadPValueMantissa AS pValueMantissa,
+  cs.leadPValueExponent AS pValueExponent,
+  cs.leadBeta AS beta,
+  cs.fineMappingMethod AS fineMappingMethod,
   cs.confidence AS confidence,
-  length(csl.locus) AS locusSize,
+  cs.locusSize AS locusSize,
   -- l2g_predictions is already sorted by score descending
   if(
     empty(l.l2g_predictions),
@@ -50,9 +50,8 @@ SELECT
   ) AS topL2GScore
 FROM
   credible_sets AS cs
-  LEFT JOIN credible_sets_locus AS csl ON cs.studyLocusId = csl.studyLocusId
-  LEFT JOIN l2g_predictions AS l ON cs.studyLocusId = l.studyLocusId
-  LEFT JOIN variants AS v ON cs.variantId = v.variantId
+  LEFT JOIN l2g_predictions AS l ON cs.credibleSetId = l.credibleSetId
+  LEFT JOIN variants AS v ON cs.leadVariantId = v.variantId
   LEFT JOIN targets AS t ON tupleElement(l.l2g_predictions[1], 'geneId') = t.id
 WHERE
   cs.studyType = 'gwas';

@@ -1,6 +1,6 @@
 CREATE TABLE if not exists colocalisation_log (
-    `leftStudyLocusId` String,
-    `rightStudyLocusId` String,
+    `leftLocusId` String,
+    `rightLocusId` String,
     `rightStudyType` Enum(
         'tuqtl',
         'pqtl',
@@ -44,5 +44,5 @@ CREATE TABLE if not exists colocalisation_log (
     `h3` Float64,
     `h4` Float64,
     `clpp` Float64,
-    `betaRatioSignAverage` Float64
+    `betaRatioSignAverage` Nullable(Float64)
 ) engine = Log;

@@ -2,18 +2,18 @@
 # Platform Output Support Configuration File - PLATFORM
 work_path: ./work
 log_level: DEBUG
-release_uri: gs://open-targets-pipeline-runs/do/platform-2609-2
+release_uri: gs://open-targets-pipeline-runs/do/platform-2612-2
 scratchpad:
   # ================================= SET THESE VALUES ====================================
-  release: '26.09' # e.g. 25.12
-  data_source: gs://open-targets-pipeline-runs/do/platform-2609-2
-  database_namespace: platform2609 # e.g. platform2512
+  release: '26.12' # e.g. 25.12
+  data_source: gs://open-targets-pipeline-runs/do/platform-2612-2
+  database_namespace: platform2612 # e.g. platform2612
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2609-os-rs4
-  opensearch_disk_snapshot_name: platform-2609-os-rs4
-  clickhouse_disk_name: platform-2609-ch-rs4
-  clickhouse_disk_snapshot_name: platform-2609-ch-rs4
+  opensearch_disk_name: platform-2612-os-1
+  opensearch_disk_snapshot_name: platform-2612-os-1
+  clickhouse_disk_name: platform-2612-ch-1
+  clickhouse_disk_snapshot_name: platform-2612-ch-1
   # Compact disks (size in GB): the data is rsynced to these smaller disks and they are snapshotted
   # instead, so the snapshot can be restored to a disk just big enough. They are created by terraform
   # as "<disk_name>-compact". Must fit the final database data. Leave empty to snapshot the data disks directly.
@@ -141,7 +141,7 @@ steps:
       foreach: &clickhouse_datasets
         - baseline_expression
         - biosample
-        - credible_sets
+        - credible_set_variant
         - colocalisation
         - disease_hpo
         - drug_warnings
@@ -154,7 +154,7 @@ steps:
         - literature_entity_lut
         - mechanism_of_action
         - mouse_phenotypes
-        - openfda_faers
+        - pharmacovigilance
         - otar_projects
         - pharmacogenomics
         - protein_coding_coords
@@ -182,6 +182,12 @@ steps:
       dataset: interaction
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_set_variant
+      dataset: credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load variants
       requires:
         - clickhouse_load clickhouse load pharmacogenomics
@@ -205,6 +211,7 @@ steps:
       requires:
         - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load studies
+        - clickhouse_load clickhouse load disease
       dataset: targets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
@@ -515,6 +522,12 @@ steps:
       dataset: interaction
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_set_variant
+      dataset: credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load variants
       requires:
         - clickhouse_load clickhouse load pharmacogenomics
@@ -538,6 +551,7 @@ steps:
       requires:
         - clickhouse_load clickhouse load pharmacogenomics
         - clickhouse_load clickhouse load studies
+        - clickhouse_load clickhouse load disease
       dataset: targets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
@@ -648,7 +662,6 @@ steps:
         - colocalisation
         - credible_sets
         - credible_sets_by_variant
-        - credible_sets_by_region
         - credible_sets_locus
         - disease_hpo
         - disease
@@ -666,9 +679,9 @@ steps:
         - mechanism_of_action
         - ml_w2v
         - mouse_phenotypes
-        - openfda_faers
         - otar_projects
         - pharmacogenomics
+        - pharmacovigilance
         - protein_coding_coords_by_target
         - protein_coding_coords_by_variant
         - sequence_ontology
@@ -726,10 +739,35 @@ steps:
           dataset: ${each}
           clickhouse_database: ${database_namespace}
           data_dir_parent: ${local_data}
-    - name: clickhouse_load clickhouse load aotf
+    - name: clickhouse_load clickhouse target_prioritisation
       requires:
-        - clickhouse_load clickhouse load disease
-      dataset: aotf
+        - clickhouse_load clickhouse load target_essentiality
+      dataset: target_prioritisation
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load interaction
+      requires:
+        - clickhouse_load clickhouse load interaction_evidence
+      dataset: interaction
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_set_variant
+      dataset: credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load variants
+      requires:
+        - clickhouse_load clickhouse load pharmacogenomics
+        - clickhouse_load clickhouse load credible_sets
+      dataset: variants
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load studies
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+      dataset: studies
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
     - name: clickhouse_load clickhouse load drug
@@ -741,9 +779,51 @@ steps:
     - name: clickhouse_load clickhouse load targets
       requires:
         - clickhouse_load clickhouse load pharmacogenomics
+        - clickhouse_load clickhouse load studies
+        - clickhouse_load clickhouse load disease
+      dataset: targets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load disease
+      requires:
+        - clickhouse_load clickhouse load studies
+      dataset: disease
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load aotf
+      requires:
+        - clickhouse_load clickhouse load disease
+      dataset: aotf
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load variant_credible_sets
+      requires:
         - clickhouse_load clickhouse load credible_sets
         - clickhouse_load clickhouse load studies
-      dataset: targets
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load disease
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load l2g_predictions
+      dataset: variant_credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load study_credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load l2g_predictions
+      dataset: study_credible_sets
+      clickhouse_database: ${database_namespace}
+      data_dir_parent: ${local_data}
+    - name: clickhouse_load clickhouse load target_credible_sets
+      requires:
+        - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load targets
+        - clickhouse_load clickhouse load variants
+        - clickhouse_load clickhouse load studies
+        - clickhouse_load clickhouse load biosample
+      dataset: target_credible_sets
       clickhouse_database: ${database_namespace}
       data_dir_parent: ${local_data}
   ########################################################################################
@@ -763,8 +843,10 @@ steps:
         - association_by_overall_indirect
         - association_overall_direct
         - biosample
+        - chembl_bioactivity
         - colocalisation
         - credible_set
+        - credible_set_variant
         - disease
         - disease_hpo
         - disease_phenotype
@@ -801,8 +883,7 @@ steps:
         - literature_entity_lut
         - literature_vector
         - mouse_phenotypes
-        - openfda_significant_adverse_drug_reactions
-        - openfda_significant_adverse_target_reactions
+        - pharmacovigilance
         - pharmacogenomics
         - protein_coding_coords
         - so

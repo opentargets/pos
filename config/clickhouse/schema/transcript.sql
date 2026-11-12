@@ -7,6 +7,12 @@ CREATE TABLE if not exists transcript_log (
     `uniprotTremblIds` Array(String),
     `uniprotIsoformIds` Array(String),
     `alphafoldIds` Array(String),
+    `dbXrefs` Array(
+        Tuple(
+            `id` String,
+            `source` String
+        )
+    ),
     `isEnsemblCanonical` Boolean,
     `chromosome` Enum (
         '1',

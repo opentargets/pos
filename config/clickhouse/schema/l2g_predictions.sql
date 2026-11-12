@@ -1,5 +1,5 @@
 CREATE TABLE if not exists l2g_predictions_log (
-    studyLocusId String,
+    credibleSetId String,
     geneId String,
     score Float64,
     features Array (

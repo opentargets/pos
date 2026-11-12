@@ -6,16 +6,13 @@ SETTINGS
   allow_nullable_key = 1 as (
     select
       studyId,
-      studyLocusId
+      id as credibleSetId
     from
       credible_sets_log
-    where
-      studyId is not null
-      and studyLocusId is not null
   );
 
 -- create the credible_sets table indexed by geneId
--- join with credible_sets_by_study to get array(studyLocusId) for each gene
+-- join with credible_sets_by_study to get array(credibleSetId) for each gene
 CREATE TABLE if not exists credible_sets_by_gene engine = MergeTree
 order by
   (geneId)
@@ -23,19 +20,18 @@ SETTINGS
   allow_nullable_key = 1 as (
     select
       geneId,
-      groupArrayDistinctIf (studyLocusId, studyLocusId != '') as studyLocusIds
+      groupArrayDistinctIf (credibleSetId, credibleSetId != '') as credibleSetIds
     from
       studies_log
       left outer join target_credible_sets_by_study on studies_log.studyId = target_credible_sets_by_study.studyId
     where
       geneId is not null
-      and studyLocusId is not null
     group by
       geneId
   );
 
 -- create the targets table indexed by id
--- and join credible_sets_by_gene to get array(studyLocusIds) for each target
+-- and join credible_sets_by_gene to get array(credibleSetIds) for each target
 -- and pharmacogenomics to get array(pharmacogenomicsIds) for each target
 CREATE TABLE if not exists targets engine = EmbeddedRocksDB () primary key id as (
   select

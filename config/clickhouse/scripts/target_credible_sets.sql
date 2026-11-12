@@ -1,8 +1,8 @@
 -- Read model for the target page molQTL credible sets table.
 -- One denormalised row per (target, QTL credible set) so the API can filter, sort and page
 -- a target's credible sets with a single table query.
--- The target link comes from targets.studyLocusIds because credible_sets.qtlGeneId is
--- not populated (it is NULL for every credible set in 26.09).
+-- The target link comes from targets.credibleSetIds (credible sets of the studies whose
+-- geneId is the target) because credible_set has no gene column.
 -- Built from final tables only (the _log tables are dropped by earlier steps),
 -- so it must run after credible_sets, targets, variants, studies and biosample.
 -- Every join is on the key of an EmbeddedRocksDB table, so they all run as direct joins.
@@ -12,19 +12,21 @@
 -- default sort (most significant first).
 CREATE TABLE IF NOT EXISTS target_credible_sets ENGINE = MergeTree()
 ORDER BY
-  (targetId, pValueExponent, pValueMantissa, studyLocusId) AS
+  (targetId, pValueExponent, pValueMantissa, credibleSetId)
+SETTINGS
+  allow_nullable_key = 1 AS
 SELECT
   tg.id AS targetId,
-  cs.studyLocusId AS studyLocusId,
-  cs.pValueMantissa AS pValueMantissa,
-  cs.pValueExponent AS pValueExponent,
-  cs.beta AS beta,
-  cs.finemappingMethod AS finemappingMethod,
+  cs.credibleSetId AS credibleSetId,
+  cs.leadPValueMantissa AS pValueMantissa,
+  cs.leadPValueExponent AS pValueExponent,
+  cs.leadBeta AS beta,
+  cs.fineMappingMethod AS fineMappingMethod,
   cs.confidence AS confidence,
   cs.isTransQtl AS isTransQtl,
-  cs.variantId AS leadVariantId,
+  cs.leadVariantId AS leadVariantId,
   cs.chromosome AS leadChromosome,
-  cs.position AS leadPosition,
+  cs.leadPosition AS leadPosition,
   v.referenceAllele AS leadReferenceAllele,
   v.alternateAllele AS leadAlternateAllele,
   cs.studyId AS studyId,
@@ -32,19 +34,18 @@ SELECT
   s.condition AS condition,
   s.biosampleFromSourceId AS biosampleId,
   toLowCardinality(b.biosampleName) AS biosampleName,
-  length(csl.locus) AS locusSize
+  cs.locusSize AS locusSize
 FROM
   (
     SELECT
       id,
-      studyLocusId
+      credibleSetId
     FROM
       targets
-      ARRAY JOIN studyLocusIds AS studyLocusId
+      ARRAY JOIN credibleSetIds AS credibleSetId
   ) AS tg
-  INNER JOIN credible_sets AS cs ON tg.studyLocusId = cs.studyLocusId
-  LEFT JOIN credible_sets_locus AS csl ON tg.studyLocusId = csl.studyLocusId
-  LEFT JOIN variants AS v ON cs.variantId = v.variantId
+  INNER JOIN credible_sets AS cs ON tg.credibleSetId = cs.credibleSetId
+  LEFT JOIN variants AS v ON cs.leadVariantId = v.variantId
   LEFT JOIN studies AS s ON cs.studyId = s.studyId
   LEFT JOIN biosample AS b ON ifNull(s.biosampleFromSourceId, '') = b.biosampleId;
 

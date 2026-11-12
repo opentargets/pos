@@ -13,7 +13,7 @@
 -- default sort (most significant first).
 CREATE TABLE IF NOT EXISTS variant_credible_sets ENGINE = MergeTree()
 ORDER BY
-  (studyType, variantId, topL2GScore, studyLocusId)
+  (studyType, variantId, topL2GScore, credibleSetId)
 SETTINGS
   allow_nullable_key = 1 AS
 WITH
@@ -66,7 +66,7 @@ WITH
   ),
   top_l2g AS (
     SELECT
-      l.studyLocusId AS studyLocusId,
+      l.credibleSetId AS credibleSetId,
       l.geneId AS geneId,
       l.score AS score,
       t.approvedSymbol AS approvedSymbol
@@ -74,7 +74,7 @@ WITH
       (
         -- l2g_predictions is already sorted by score descending
         SELECT
-          studyLocusId,
+          credibleSetId,
           tupleElement(l2g_predictions[1], 'geneId') AS geneId,
           tupleElement(l2g_predictions[1], 'score') AS score
         FROM
@@ -93,15 +93,15 @@ WITH
   sets AS (
     SELECT
       cs.studyType AS studyType,
-      cs.studyLocusId AS studyLocusId,
-      cs.pValueMantissa AS pValueMantissa,
-      cs.pValueExponent AS pValueExponent,
-      cs.beta AS beta,
-      cs.finemappingMethod AS finemappingMethod,
+      cs.credibleSetId AS credibleSetId,
+      cs.leadPValueMantissa AS pValueMantissa,
+      cs.leadPValueExponent AS pValueExponent,
+      cs.leadBeta AS beta,
+      cs.fineMappingMethod AS fineMappingMethod,
       cs.confidence AS confidence,
-      cs.variantId AS leadVariantId,
+      cs.leadVariantId AS leadVariantId,
       cs.chromosome AS leadChromosome,
-      cs.position AS leadPosition,
+      cs.leadPosition AS leadPosition,
       v.referenceAllele AS leadReferenceAllele,
       v.alternateAllele AS leadAlternateAllele,
       cs.studyId AS studyId,
@@ -111,17 +111,17 @@ WITH
         arrayDistinct(arrayFlatten(arrayMap(d -> d .3, si.diseases)))
       ) AS therapeuticAreas,
       -- top_l2g only has credible sets with predictions, so an unmatched join
-      -- (studyLocusId '') means there are none
-      if(tl.studyLocusId = '', NULL, tl.geneId) AS topL2GGeneId,
+      -- (credibleSetId '') means there are none
+      if(tl.credibleSetId = '', NULL, tl.geneId) AS topL2GGeneId,
       nullIf(tl.approvedSymbol, '') AS topL2GApprovedSymbol,
-      if(tl.studyLocusId = '', NULL, tl.score) AS topL2GScore,
+      if(tl.credibleSetId = '', NULL, tl.score) AS topL2GScore,
       csl.locus AS locus,
-      length(csl.locus) AS locusSize
+      cs.locusSize AS locusSize
     FROM
       credible_sets AS cs
-      INNER JOIN credible_sets_locus AS csl ON cs.studyLocusId = csl.studyLocusId
+      INNER JOIN credible_sets_locus AS csl ON cs.credibleSetId = csl.credibleSetId
       LEFT JOIN study_info AS si ON cs.studyId = si.studyId
-      LEFT JOIN top_l2g AS tl ON cs.studyLocusId = tl.studyLocusId
+      LEFT JOIN top_l2g AS tl ON cs.credibleSetId = tl.credibleSetId
       LEFT JOIN (
         SELECT
           variantId,
@@ -129,18 +129,18 @@ WITH
           alternateAllele
         FROM
           variants
-      ) AS v ON cs.variantId = v.variantId
+      ) AS v ON cs.leadVariantId = v.variantId
   )
 SELECT
   studyType,
   tupleElement(l, 'variantId') AS variantId,
-  studyLocusId,
+  credibleSetId,
   tupleElement(l, 'posteriorProbability') AS posteriorProbability,
   locusSize,
   pValueMantissa,
   pValueExponent,
   beta,
-  finemappingMethod,
+  fineMappingMethod,
   confidence,
   leadVariantId,
   leadChromosome,

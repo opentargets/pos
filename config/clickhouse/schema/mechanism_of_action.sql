@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS mechanism_of_action_log (
     actionType Nullable (String),
     targetType Nullable (String),
     targetName Nullable (String),
+    curation String,
     references Array (
         Tuple (
             ids Array (String),

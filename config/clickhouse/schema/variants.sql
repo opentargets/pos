@@ -54,8 +54,6 @@ CREATE TABLE if not exists variants_log (
             `impact` Nullable (String),
             `transcriptId` Nullable (String),
             `lofteePrediction` Nullable (String),
-            `siftPrediction` Nullable (Float64),
-            `polyphenPrediction` Nullable (Float64),
             `transcriptIndex` UInt32,
             `consequenceScore` Float64
         )

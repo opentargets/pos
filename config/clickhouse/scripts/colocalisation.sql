@@ -1,8 +1,8 @@
 create table if not exists colocalisation_left engine = MergeTree ()
-order by (rightStudyType, studyLocusId) as
+order by (rightStudyType, credibleSetId) as
 select
-    studyLocusId,
-    otherStudyLocusId,
+    credibleSetId,
+    otherCredibleSetId,
     rightStudyType,
     chromosome,
     colocalisationMethod,
@@ -13,15 +13,15 @@ select
     betaRatioSignAverage
 from (
         select
-            leftStudyLocusId as studyLocusId, rightStudyLocusId as otherStudyLocusId, rightStudyType, chromosome, colocalisationMethod, numberColocalisingVariants, h3, h4, clpp, betaRatioSignAverage
+            leftLocusId as credibleSetId, rightLocusId as otherCredibleSetId, rightStudyType, chromosome, colocalisationMethod, numberColocalisingVariants, h3, h4, clpp, betaRatioSignAverage
         from colocalisation_log
     ) as left_colocs;
 
 create table if not exists colocalisation_right engine = MergeTree ()
-order by (rightStudyType, studyLocusId) as
+order by (rightStudyType, credibleSetId) as
 select
-    studyLocusId,
-    otherStudyLocusId,
+    credibleSetId,
+    otherCredibleSetId,
     rightStudyType,
     chromosome,
     colocalisationMethod,
@@ -32,19 +32,19 @@ select
     betaRatioSignAverage
 from (
         select
-            rightStudyLocusId as studyLocusId, leftStudyLocusId as otherStudyLocusId, 'gwas' as rightStudyType, chromosome, colocalisationMethod, numberColocalisingVariants, h3, h4, clpp, betaRatioSignAverage
+            rightLocusId as credibleSetId, leftLocusId as otherCredibleSetId, 'gwas' as rightStudyType, chromosome, colocalisationMethod, numberColocalisingVariants, h3, h4, clpp, betaRatioSignAverage
         from colocalisation_log
     ) as right_colocs;
 
 
-CREATE TABLE IF NOT EXISTS colocalisation ENGINE = EmbeddedRocksDB () PRIMARY KEY studyLocusId AS (
+CREATE TABLE IF NOT EXISTS colocalisation ENGINE = EmbeddedRocksDB () PRIMARY KEY credibleSetId AS (
     SELECT
-        studyLocusId,
+        credibleSetId,
         groupArrayDistinct (
             
                 (
-                    studyLocusId,
-                    otherStudyLocusId,
+                    credibleSetId,
+                    otherCredibleSetId,
                     rightStudyType,
                     chromosome,
                     colocalisationMethod,
@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS colocalisation ENGINE = EmbeddedRocksDB () PRIMARY KE
                     betaRatioSignAverage
                 )::
                 Tuple(
-                    `studyLocusId` String,
-                    `otherStudyLocusId` String,
+                    `credibleSetId` String,
+                    `otherCredibleSetId` String,
                     `rightStudyType` Enum(
                         'tuqtl',
                         'pqtl',
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS colocalisation ENGINE = EmbeddedRocksDB () PRIMARY KE
                     `h3` Float64,
                     `h4` Float64,
                     `clpp` Float64,
-                    `betaRatioSignAverage` Float64
+                    `betaRatioSignAverage` Nullable(Float64)
                 )
             ) as colocalisation
     FROM (
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS colocalisation ENGINE = EmbeddedRocksDB () PRIMARY KE
         FROM colocalisation_right
     )
     GROUP BY
-        studyLocusId
+        credibleSetId
 );
 
 drop table colocalisation_log SYNC;

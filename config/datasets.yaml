@@ -67,6 +67,11 @@ clickhouse:
     input_dir: output/colocalisation
     preload_script: config/clickhouse/schema/colocalisation.sql
     postload_script: config/clickhouse/scripts/colocalisation.sql
+  # credible_set_variant has no postload script: credible_sets builds its tables from both _log tables.
+  credible_set_variant:
+    table: credible_set_variant_log
+    input_dir: output/credible_set_variant
+    preload_script: config/clickhouse/schema/credible_set_variant.sql
   credible_sets:
     table: credible_sets_log
     input_dir: output/credible_set
@@ -153,11 +158,11 @@ clickhouse:
     input_dir: view/association_timeseries
     preload_script: config/clickhouse/schema/association_time_series.sql
     postload_script: config/clickhouse/scripts/association_time_series.sql
-  openfda_faers:
-    table: openfda_faers_log
-    input_dir: output/openfda_significant_adverse_drug_reactions
-    preload_script: config/clickhouse/schema/openfda_faers.sql
-    postload_script: config/clickhouse/scripts/openfda_faers.sql
+  pharmacovigilance:
+    table: pharmacovigilance_log
+    input_dir: output/pharmacovigilance
+    preload_script: config/clickhouse/schema/pharmacovigilance.sql
+    postload_script: config/clickhouse/scripts/pharmacovigilance.sql
   otar_projects:
     table: otar_projects_log
     input_dir: output/otar
@@ -264,12 +269,18 @@ bigquery:
   biosample:
     index: biosample
     input_dir: output/biosample
+  chembl_bioactivity:
+    index: chembl_bioactivity
+    input_dir: output/chembl_bioactivity
   colocalisation:
     index: colocalisation
     input_dir: output/colocalisation
   credible_set:
     index: credible_set
     input_dir: output/credible_set
+  credible_set_variant:
+    index: credible_set_variant
+    input_dir: output/credible_set_variant
   disease:
     index: disease
     input_dir: output/disease
@@ -384,12 +395,9 @@ bigquery:
   mouse_phenotypes:
     index: mouse_phenotype
     input_dir: output/mouse_phenotype
-  openfda_significant_adverse_drug_reactions:
-    index: openfda_significant_adverse_drug_reactions
-    input_dir: output/openfda_significant_adverse_drug_reactions
-  openfda_significant_adverse_target_reactions:
-    index: openfda_significant_adverse_target_reactions
-    input_dir: output/openfda_significant_adverse_target_reactions
+  pharmacovigilance:
+    index: pharmacovigilance
+    input_dir: output/pharmacovigilance
   pharmacogenomics:
     index: pharmacogenomics
     input_dir: output/pharmacogenomics
