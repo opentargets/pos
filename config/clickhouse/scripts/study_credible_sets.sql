@@ -13,7 +13,12 @@
 -- default sort (topL2GScore).
 CREATE TABLE IF NOT EXISTS study_credible_sets ENGINE = MergeTree()
 ORDER BY
-  (studyId, topL2GScore, studyLocusId)
+  (
+    studyId,
+    pValueExponent,
+    pValueMantissa,
+    studyLocusId
+  )
 SETTINGS
   allow_nullable_key = 1 AS
 SELECT
