@@ -53,7 +53,7 @@ class GCPSnapshotDisk:
 
 
 def wait_for_extended_operation(
-    operation: ExtendedOperation, verbose_name: str = 'operation', timeout: int = 600
+    operation: ExtendedOperation, verbose_name: str = 'operation', timeout: int = 1800
 ) -> Any:
     """Waits for the extended (long-running) operation to complete.
 
