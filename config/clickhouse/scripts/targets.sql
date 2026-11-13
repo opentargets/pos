@@ -278,11 +278,7 @@ order by
       targets
   );
 
-CREATE DICTIONARY target_symbols (id String, approvedSymbol String) PRIMARY KEY id SOURCE (
-  CLICKHOUSE (
-    QUERY 'SELECT toString(id) AS id, toString(approvedSymbol) AS approvedSymbol FROM targets'
-  )
-) LAYOUT (COMPLEX_KEY_HASHED ()) LIFETIME (0);
+CREATE DICTIONARY target_symbols (id String, approvedSymbol String) PRIMARY KEY id SOURCE (CLICKHOUSE (TABLE 'targets')) LAYOUT (COMPLEX_KEY_HASHED ()) LIFETIME (0);
 
 DROP TABLE IF EXISTS targets_log
 SYNC;

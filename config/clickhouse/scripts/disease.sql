@@ -57,11 +57,7 @@ CREATE TABLE if not exists disease engine = EmbeddedRocksDB () primary key id as
     left outer join studies_by_disease_indirect as indirect_studies on disease_log.id = indirect_studies.diseaseId
 );
 
-CREATE DICTIONARY disease_names (id String, name String) PRIMARY KEY id SOURCE (
-  CLICKHOUSE (
-    QUERY 'SELECT toString(id) AS id, toString(name) AS name FROM disease'
-  )
-) LAYOUT (COMPLEX_KEY_HASHED ()) LIFETIME (0);
+CREATE DICTIONARY disease_names (id String, name String) PRIMARY KEY id SOURCE (CLICKHOUSE (TABLE 'disease')) LAYOUT (COMPLEX_KEY_HASHED ()) LIFETIME (0);
 
 DROP TABLE IF EXISTS studies_by_disease
 SYNC;

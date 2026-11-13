@@ -5,11 +5,14 @@ CREATE TABLE IF NOT EXISTS biosample ENGINE = EmbeddedRocksDB () PRIMARY KEY bio
     biosample_log
 );
 
-CREATE DICTIONARY biosample_names (id String, name String) PRIMARY KEY id SOURCE (
-  CLICKHOUSE (
-    QUERY 'SELECT toString(biosampleId) AS id, toString(biosampleName) AS name FROM biosample'
-  )
-) LAYOUT (COMPLEX_KEY_HASHED ()) LIFETIME (0);
+CREATE VIEW biosample_names_source AS
+SELECT
+  biosampleId AS id,
+  biosampleName AS name
+FROM
+  biosample;
+
+CREATE DICTIONARY biosample_names (id String, name String) PRIMARY KEY id SOURCE (CLICKHOUSE (TABLE 'biosample_names_source')) LAYOUT (COMPLEX_KEY_HASHED ()) LIFETIME (0);
 
 DROP TABLE IF EXISTS biosample_log
 SYNC;
