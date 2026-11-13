@@ -68,7 +68,7 @@ steps:
     - name: ot_croissant generate release metadata
       requires:
         - sync_bucket etl output files
-      ftp_address: http://ftp.ebi.ac.uk/pub/databases/opentargets/platform/${release}/output/
+      ftp_address: https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/${release}/output/
       gcp_address: ${release_gcs_bucket}/${release}/output/
       aws_address: ${aws_address}/${release}/output/
       dataset_path: ${local_data}/output
@@ -277,7 +277,7 @@ steps:
     - name: ot_croissant generate release metadata
       requires:
         - sync_bucket etl output files
-      ftp_address: http://ftp.ebi.ac.uk/pub/databases/opentargets/platform/${release}/output/
+      ftp_address: https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/${release}/output/
       gcp_address: ${release_gcs_bucket}/${release}/output/
       aws_address: ${aws_address}/${release}/output/
       dataset_path: ${local_data}/output
@@ -296,7 +296,7 @@ steps:
     - name: ot_croissant generate release metadata
       requires:
         - sync_bucket etl output files
-      ftp_address: http://ftp.ebi.ac.uk/pub/databases/opentargets/platform/${release}/output/
+      ftp_address: https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/${release}/output/
       gcp_address: ${release_gcs_bucket}/${release}/output/
       aws_address: ${aws_address}/${release}/output/
       dataset_path: ${local_data}/output
