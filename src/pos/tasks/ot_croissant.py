@@ -85,7 +85,6 @@ class OtCroissant(Task):
             aws_location=self.spec.aws_address,
             version=release,
             date_published=datetime.today().strftime('%Y-%m-%d'),
-            data_integrity_hash='sha256',
         )
         logger.debug(f'Metadata generated: {metadata}')
 
