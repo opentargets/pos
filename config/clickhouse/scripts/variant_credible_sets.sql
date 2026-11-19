@@ -2,7 +2,10 @@
 -- One fully denormalised row per (variant in locus, credible set) so the API can
 -- filter and sort on any column with a single table query.
 -- Built from final tables only (the _log tables are dropped by earlier steps),
--- so it must run after credible_sets, studies, disease, targets, variants and l2g_predictions.
+-- so it must run after credible_sets, studies, disease, targets, variants, biosample
+-- and l2g_predictions.
+-- studyTargetId / studyTargetApprovedSymbol and biosampleId / biosampleName are NULL when
+-- the study has no target or biosample (e.g. GWAS) or the id is not found.
 -- diseases holds (id, name) for each study disease.
 -- diseaseTherapeuticAreas is the distinct union of (id, name) across all of the study diseases.
 -- The topL2G fields are NULL when a credible set has no L2G predictions
@@ -46,6 +49,9 @@ WITH
     SELECT
       sd.studyId AS studyId,
       any(sd.traitFromSource) AS traitFromSource,
+      any(sd.condition) AS condition,
+      any(sd.geneId) AS studyTargetId,
+      any(sd.biosampleFromSourceId) AS biosampleId,
       groupArrayIf (
         (dt.id, dt.name, dt.therapeuticAreas),
         sd.diseaseId != ''
@@ -55,6 +61,9 @@ WITH
         SELECT
           studyId,
           traitFromSource,
+          condition,
+          geneId,
+          biosampleFromSourceId,
           diseaseId
         FROM
           studies
@@ -99,6 +108,7 @@ WITH
       cs.leadBeta AS beta,
       cs.fineMappingMethod AS fineMappingMethod,
       cs.confidence AS confidence,
+      cs.isTransQtl AS isTransQtl,
       cs.leadVariantId AS leadVariantId,
       cs.chromosome AS leadChromosome,
       cs.leadPosition AS leadPosition,
@@ -106,6 +116,11 @@ WITH
       v.alternateAllele AS leadAlternateAllele,
       cs.studyId AS studyId,
       si.traitFromSource AS traitFromSource,
+      si.condition AS condition,
+      si.studyTargetId AS studyTargetId,
+      nullIf(st.approvedSymbol, '') AS studyTargetApprovedSymbol,
+      si.biosampleId AS biosampleId,
+      nullIf(b.biosampleName, '') AS biosampleName,
       si.diseases AS diseases,
       arraySort(
         arrayDistinct(arrayFlatten(arrayMap(d -> d .3, si.diseases)))
@@ -130,6 +145,20 @@ WITH
         FROM
           variants
       ) AS v ON cs.leadVariantId = v.variantId
+      LEFT JOIN (
+        SELECT
+          id,
+          approvedSymbol
+        FROM
+          targets
+      ) AS st ON ifNull(si.studyTargetId, '') = st.id
+      LEFT JOIN (
+        SELECT
+          biosampleId,
+          biosampleName
+        FROM
+          biosample
+      ) AS b ON ifNull(si.biosampleId, '') = b.biosampleId
   )
 SELECT
   studyType,
@@ -142,12 +171,18 @@ SELECT
   beta,
   fineMappingMethod,
   confidence,
+  isTransQtl,
   leadVariantId,
   leadChromosome,
   leadPosition,
   leadReferenceAllele,
   leadAlternateAllele,
   studyId,
+  condition,
+  studyTargetId,
+  toLowCardinality(studyTargetApprovedSymbol) AS studyTargetApprovedSymbol,
+  biosampleId,
+  toLowCardinality(biosampleName) AS biosampleName,
   toLowCardinality(traitFromSource) AS traitFromSource,
   CAST(
     arrayMap(d -> (d .1, d .2), diseases),

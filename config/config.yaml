@@ -230,6 +230,7 @@ steps:
     - name: clickhouse_load clickhouse load variant_credible_sets
       requires:
         - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load biosample
         - clickhouse_load clickhouse load studies
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load disease
@@ -570,6 +571,7 @@ steps:
     - name: clickhouse_load clickhouse load variant_credible_sets
       requires:
         - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load biosample
         - clickhouse_load clickhouse load studies
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load disease
@@ -799,6 +801,7 @@ steps:
     - name: clickhouse_load clickhouse load variant_credible_sets
       requires:
         - clickhouse_load clickhouse load credible_sets
+        - clickhouse_load clickhouse load biosample
         - clickhouse_load clickhouse load studies
         - clickhouse_load clickhouse load targets
         - clickhouse_load clickhouse load disease
