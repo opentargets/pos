@@ -5,9 +5,9 @@ variable "vm_pos_boot_disk_size" {
 }
 
 variable "vm_pos_machine_type" {
-  description = "Machine type for POS vm, default 'n2-highmem-96'"
+  description = "Machine type for POS vm, default 'n2d-highmem-96'"
   type        = string
-  default     = "n2-highmem-96"
+  default     = "n2d-highmem-96"
 }
 
 variable "pos_logs_path_root" {
