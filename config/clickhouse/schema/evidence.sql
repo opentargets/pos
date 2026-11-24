@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS evidence_log (
   `datasourceId` String,
   `datatypeId` String,
   `oddsRatioConfidenceIntervalUpper` Nullable(Float64),
+  `log2FoldChangeValue` Nullable(Float64),
   `phenotypicConsequenceScore` Nullable(Float64),
   `oddsRatio` Nullable(Float64),
   `cohortDescription` Nullable(String),

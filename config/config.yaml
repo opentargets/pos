@@ -2,18 +2,18 @@
 # Platform Output Support Configuration File - PLATFORM
 work_path: ./work
 log_level: DEBUG
-release_uri: gs://open-targets-pipeline-runs/do/platform-2612-2
+release_uri: gs://open-targets-pipeline-runs/do/platform-2612-3
 scratchpad:
   # ================================= SET THESE VALUES ====================================
   release: '26.12' # e.g. 25.12
-  data_source: gs://open-targets-pipeline-runs/do/platform-2612-2
+  data_source: gs://open-targets-pipeline-runs/do/platform-2612-3
   database_namespace: platform2612 # e.g. platform2612
 
   # Google disk snapshot variables
-  opensearch_disk_name: platform-2612-os-1
-  opensearch_disk_snapshot_name: platform-2612-os-1
-  clickhouse_disk_name: platform-2612-ch-1
-  clickhouse_disk_snapshot_name: platform-2612-ch-1
+  opensearch_disk_name: platform-2612-os-5
+  opensearch_disk_snapshot_name: platform-2612-os-5
+  clickhouse_disk_name: platform-2612-ch-5
+  clickhouse_disk_snapshot_name: platform-2612-ch-5
   # Compact disks (size in GB): the data is rsynced to these smaller disks and they are snapshotted
   # instead, so the snapshot can be restored to a disk just big enough. They are created by terraform
   # as "<disk_name>-compact". Must fit the final database data. Leave empty to snapshot the data disks directly.
